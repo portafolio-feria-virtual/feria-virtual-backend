@@ -1,7 +1,7 @@
-"""back_feria_virtual URL Configuration
+"""back_feria URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from apps.cuentas.urls import cuentas_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+urlpatterns += cuentas_urlpatterns
