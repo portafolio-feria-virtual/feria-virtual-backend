@@ -37,17 +37,32 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "apps.cuentas",
+    
+
+    #Aplicaciones externas
+    "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "djoser",
+    "django_rest_passwordreset",
+
+
+    #Aplicaciones creadas 
+    "apps.cuentas",
+   # "djoser",
+   # "rest_framework_passwordreset",
     
 ]
+
+AUTH_USER_MODEL = 'cuentas.usuarios'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    
+    # Modulo de Cors
+    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -74,7 +89,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'back_feria.wsgi.application'
 
-
+SESSION_COOKIE_HTTPONLY = True
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -85,6 +100,7 @@ DATABASES = {
     }
 }
 
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -124,15 +140,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# configure DRF
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-}
+# Configuración de CORS
+CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
+CORS_ALLOW_CREDENTIALS = True
+
+# # configure DRF
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework.authentication.SessionAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.IsAuthenticated",
+#     ],
+# }
 
 # configure Djoser
-DJOSER = {"USER_ID_FIELD": "username"}
+# DJOSER = {"USER_ID_FIELD": "username"}
