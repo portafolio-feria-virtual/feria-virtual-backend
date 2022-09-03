@@ -18,4 +18,3 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_password(self, value):
         return make_password(value)
-        
