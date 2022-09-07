@@ -1,5 +1,5 @@
 
-from .views import LoginView, LogoutView, SignupView
+from .views import LoginView, LogoutView, SignupView, CurrentUserView
 from django.urls import path, include
 
 urlpatterns= [
@@ -20,4 +20,5 @@ urlpatterns= [
          include('django_rest_passwordreset.urls',
                  namespace='password_reset')),
 
+    path('auth/user/', CurrentUserView.as_view(), name= "user" )
 ]

@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer
 from django.dispatch import receiver
 from django_rest_passwordreset.signals import reset_password_token_created
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 class LoginView(APIView):
@@ -15,13 +17,16 @@ class LoginView(APIView):
         # Recuperamos las credenciales y autenticamos al usuario
         email = request.data.get('email', None)
         password = request.data.get('password', None)
+        print(email, password)
         user = authenticate(email=email, password=password)
 
         # Si es correcto añadimos a la request la información de sesión
         if user:
             login(request, user)
+            #request.session.set_expiry()
             return Response(UserSerializer(user).data,
                 status=status.HTTP_200_OK)
+                #.set_cookie("esta_es_la_cookie","probandocookie", max_age=60,expires=None)
 
         # Si no es correcto devolvemos un error en la petición
         return Response(
@@ -38,6 +43,13 @@ class LogoutView(APIView):
 
 class SignupView(generics.CreateAPIView):
     serializer_class = UserSerializer
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated, ]
+    authentication_classes = [SessionAuthentication, ]
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 
 @receiver(reset_password_token_created)

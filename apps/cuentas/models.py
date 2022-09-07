@@ -9,17 +9,20 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class UserManager(BaseUserManager):
 	def _create_user(self, username, email, password, is_staff,is_superuser,**extra_fields):
+		print(extra_fields)
 		if not email:
 			raise ValueError('El email debe ser obligatorio')
+		if not extra_fields['tipo_usuario']:
+			raise ValueError("Debe especificar tipo de usuario")
 		email= self.normalize_email(email)
 		user = self.model(username=username, email=email, is_active=True,
 				is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
 		user.set_password(password)
 		user.save(using = self._db)
 		return user
-	def create_user(self, username, email, password=None ,**extra_fields):
+	def create_user(self, username, email,  password=None,**extra_fields):
 		return self._create_user(username, email, password, False,False, **extra_fields)
-	def create_superuser(self, username, email, password, **extra_fields):
+	def create_superuser(self, username, email, password, **extra_fields ):
 		return self._create_user(username, email, password, True,True, **extra_fields)
 
 class usuarios(AbstractBaseUser, PermissionsMixin):
@@ -33,11 +36,11 @@ class usuarios(AbstractBaseUser, PermissionsMixin):
 	objects = UserManager()
 	is_active = models.BooleanField('Esta activo',default=True)
 	is_staff = models.BooleanField('Es administrador',default=False)
-	tipos = (('productor','Productor'),('interno','Interno'),('externo','Externo'),('consultor','Consultor'),('transportista','Transportista'))
+	tipos = (('0','Productor'),('1','Interno'),('2','Externo'),('3','Consultor'),('4','Transportista'),('5', "Administrador"))
 	tipo_usuario = models.CharField(max_length=50,choices=tipos,default='externo')
 
 	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = ['username']
+	REQUIRED_FIELDS = ['username','tipo_usuario']
 
 	def get_short_name(self):
 		return self.username
