@@ -40,7 +40,7 @@ Para que la acción de **_Signup_** se efectue de manera correcta, se debe se de
 
 Para que la acción de **_Password Reset_** se inicie se debe ir a la dirección :
 
-    /api/auth/reset/
+    api/auth/reset/
 
 Para que la acción de **_Password Reset_** se efectue de manera correcta se debe entregar un parametro en formato **_JSON_** con el siguiente formato:
 
