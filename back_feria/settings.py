@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     #Aplicaciones creadas 
     "apps.cuentas",
+    "apps.sistema",
    # "djoser",
    # "rest_framework_passwordreset",
     

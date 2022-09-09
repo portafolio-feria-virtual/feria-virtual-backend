@@ -29,6 +29,7 @@ class usuarios(AbstractBaseUser, PermissionsMixin):
 	email = models.EmailField('Correo electronico', max_length=254, unique = True)
 	first_name = models.CharField('Primer nombre',max_length=100)
 	last_name = models.CharField('Apellido',max_length=100)
+	rut_persona = models.CharField("Rut", max_length=15, unique=True,default="")
 	direccion = models.CharField('Direccion', max_length=50)
 	objects = UserManager()
 	is_active = models.BooleanField('Esta activo',default=True)
@@ -40,4 +41,4 @@ class usuarios(AbstractBaseUser, PermissionsMixin):
 	REQUIRED_FIELDS = ['username']
 
 	def get_short_name(self):
-		return self.username
+		return self.id_user
