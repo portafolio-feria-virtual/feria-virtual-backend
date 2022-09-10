@@ -146,8 +146,8 @@ STATIC_URL = '/static/'
 #AUTH_TOKEN_VALIDITY = getattr(settings, 'AUTH_TOKEN_VALIDITY', timedelta(minutes=1))
 
 # Configuración de CORS
-CORS_ORIGIN_WHITELIST = ["http://localhost:5173", "http://127.0.0.1:5173"],
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+CORS_ORIGIN_WHITELIST = ["http://127.0.0.1:5173" , "http://localhost:5173"],
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5173", "http://localhost:5173"]
 CORS_ALLOW_CREDENTIALS = True
 
 #CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
