@@ -41,7 +41,8 @@ class usuarios(AbstractBaseUser, PermissionsMixin):
 	objects = UserManager()
 	is_active = models.BooleanField('Esta activo',default=True)
 	is_staff = models.BooleanField('Es administrador',default=False)
-	tipos = (('0','Productor'),('1','Interno'),('2','Externo'),('3','Consultor'),('4','Transportista'),('5', "Administrador"))
+	tipos = (('0', 'Externo'), ('1', 'Interno'), ('2', 'Productor'),
+	         ('3', 'Transportista'), ('4', 'Consultor'), ('5', "Administrador"))
 	tipo_usuario = models.CharField("Tipo de usuario",max_length=50,choices=tipos,default='interno')
 	country = models.CharField('Pais',max_length=20, default='Chile',blank=True)
 	doc_num = models.CharField("Numero de documento", max_length=9, blank=True)

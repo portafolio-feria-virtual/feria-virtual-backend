@@ -19,20 +19,25 @@ class UserSerializer(serializers.ModelSerializer):
     # 
     first_name = serializers.CharField(max_length=100, allow_blank= True )
     last_name = serializers.CharField(max_length=100, allow_blank= True)
-    rut = serializers.CharField( max_length=11)
+    rut = serializers.CharField(
+        max_length=11, allow_blank=True, required=False)
     address = serializers.CharField( max_length=50, allow_blank= True)
     phone = serializers.CharField(max_length=20, allow_blank= True)
     #is_active = serializers.BooleanField('Esta activo',default=True)
     #is_staff = serializers.BooleanField('Es administrador',default=False)
-    tipos = (('0','Productor'),('1','Interno'),('2','Externo'),('3','Consultor'),('4','Transportista'),('5', "Administrador"))
+    tipos = (('0','Externo'),('1','Interno'),('2','Productor'),('3','Transportista'),('4','Consultor'),('5', "Administrador"))
     tipo_usuario = serializers.CharField(max_length=50)
     country = serializers.CharField(max_length=20, allow_blank= True)
-    doc_num = serializers.CharField(max_length=9, allow_blank= True)
-    business_name = serializers.CharField(max_length=100, allow_blank= True)
-    capacity = serializers.CharField(max_length=20, allow_blank=True)
-    prod_type = serializers.CharField(max_length=150, allow_blank= True)
-    size = serializers.CharField(max_length = 20, allow_blank=True)
-    cooling = serializers.BooleanField()
+    doc_num = serializers.CharField(
+        max_length=9, allow_blank=True, required=False)
+    business_name = serializers.CharField(
+        max_length=100, allow_blank=True, required=False)
+    capacity = serializers.CharField(
+        max_length=20, allow_blank=True, required=False)
+    prod_type = serializers.CharField(max_length=150, allow_blank= True, required=False)
+    size = serializers.CharField(
+        max_length=20, allow_blank=True, required=False)
+    cooling = serializers.BooleanField(required=False)
     
     def validate_size(self, value):
         if not value:
