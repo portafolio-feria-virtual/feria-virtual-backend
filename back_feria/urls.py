@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Rutas Api
-    path('api/',include('apps.cuentas.urls')),
+    path('api/',include('Aplicaciones.cuentas.urls')),
     path('api/',include(router.urls))
 ]
 

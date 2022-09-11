@@ -50,7 +50,8 @@ INSTALLED_APPS = [
 
 
     #Aplicaciones creadas 
-    "apps.cuentas",
+    "Aplicaciones.cuentas",
+    "Aplicaciones.sistema"
    # "djoser",
    # "rest_framework_passwordreset",
     
@@ -98,10 +99,23 @@ SESSION_COOKIE_HTTPONLY = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME':'django_sqlserver',
+        'USER':'sa',
+        'PASSWORD':'12345678',
+        'HOST':'LAPTOP-DBBMELQV',
+        'PORT':'',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
