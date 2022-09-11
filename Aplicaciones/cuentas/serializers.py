@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
     #is_staff = serializers.BooleanField('Es administrador',default=False)
     tipos = (('0','Externo'),('1','Interno'),('2','Productor'),('3','Transportista'),('4','Consultor'),('5', "Administrador"))
     tipo_usuario = serializers.CharField(max_length=50)
-    country = serializers.CharField(max_length=20, allow_blank= True)
+    country = serializers.CharField(max_length=20, allow_blank= True,required=False)
     doc_num = serializers.CharField(
         max_length=9, allow_blank=True, required=False)
     business_name = serializers.CharField(
