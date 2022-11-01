@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
 from rest_framework import status, generics
 from .serializers import *
 from django.contrib.auth.models import User
@@ -49,7 +51,7 @@ class LoginView(APIView):
         try:
             user = authenticate(email=email, password=password)
 
-            if user is not None:
+            if user:
                 login(request, user)
                 return Response({ 'success': 'User authenticated' })
             else:
@@ -62,20 +64,23 @@ class LoginView(APIView):
 
 
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
-class GetCSRFToken(APIView):
-    permission_classes = (permissions.AllowAny, )
+# @method_decorator(ensure_csrf_cookie, name='dispatch')
+# class GetCSRFToken(APIView):
+#     permission_classes = (permissions.AllowAny, )
 
-    def get(self, request, format=None):
-        return Response({ 'success': 'CSRF cookie set' })
+#     def get(self, request, format=None):
+#         return Response({ 'success': 'CSRF cookie set' })
+def csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
 
-
+def ping(request):
+    return JsonResponse({'result': 'OK'})
 
 class LogoutView(APIView):
     def post(self, request, format=None):
         try:
             logout(request)
-            return Response({ 'success': 'Loggout Out' })
+            return Response({ 'success': 'Logout Out' })
         except:
             return Response({ 'error': 'Something went wrong when logging out' })
 
@@ -103,12 +108,12 @@ class CurrentUserView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
-class GetCSRFToken(APIView):
-    permission_classes = (permissions.AllowAny, )
+# @method_decorator(ensure_csrf_cookie, name='dispatch')
+# class GetCSRFToken(APIView):
+#     permission_classes = (permissions.AllowAny, )
 
-    def get(self, request, format=None):
-        return Response({ 'success': 'CSRF cookie set' })
+#     def get(self, request, format=None):
+#         return JsonResponse({ 'success': 'CSRF cookie set' })
 
 class DeleteAccountView(APIView):
     def delete(self, request, format=None):

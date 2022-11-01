@@ -19,7 +19,9 @@ urlpatterns = [
          LogoutView.as_view(), name='auth_logout'),
          path('auth/user/', CurrentUserView.as_view(), name= "user" ),
          path('auth/isAuthenticated/', CheckAuthenticatedView.as_view(), name= "user" ),
-         path('auth/csrf_cookie', GetCSRFToken.as_view()),
+         #path('auth/GetCsrf', GetCSRFToken.as_view()),
+         path('auth/csrf_cookie', csrf),
+         path('auth/ping', ping),
          path('auth/delete', DeleteAccountView.as_view()),
 
 
