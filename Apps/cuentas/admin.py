@@ -34,5 +34,8 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(UserAccount, UserAdmin)
 
 admin.site.register(ComercianteExtranjero)
+admin.site.register(ComercianteLocal)
+admin.site.register(Productor)
+admin.site.register(Transportista)
 
 

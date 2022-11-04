@@ -19,20 +19,20 @@ from rest_framework.permissions import IsAuthenticated
 #     serializer_class = UserSerializer
 
 
-@method_decorator(csrf_protect, name='dispatch')
+#@method_decorator(csrf_protect, name='dispatch')
 class ExtranjeroSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = ComercianteExtranjeroSignupSerializer
 
-@method_decorator(csrf_protect, name='dispatch')
+#@method_decorator(csrf_protect, name='dispatch')
 class LocalSignupView(generics.CreateAPIView):
     serializer_class = ComercianteLocalSignupSerializer
 
-@method_decorator(csrf_protect, name='dispatch')
+#@method_decorator(csrf_protect, name='dispatch')
 class ProductorSignupView(generics.CreateAPIView):
     serializer_class = ProductorSignupSerializer
 
-@method_decorator(csrf_protect, name='dispatch')
+#@method_decorator(csrf_protect, name='dispatch')
 class TransportistaSignupView(generics.CreateAPIView):
     serializer_class = TransportistaSignupSerializer
 

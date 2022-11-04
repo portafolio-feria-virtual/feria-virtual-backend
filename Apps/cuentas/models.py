@@ -69,10 +69,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     esProductor = models.BooleanField(default = False)
     esTransportista = models.BooleanField(default = False)
 
-    nombre = models.CharField(max_length= 100)
-    apellido = models.CharField(max_length= 100)
-    direccion = models.CharField(max_length= 100)
-    telefono = models.CharField(max_length= 100)
+    firstName = models.CharField(max_length= 100)
+    lastName = models.CharField(max_length= 100)
+    address = models.CharField(max_length= 100)
+    phone = models.CharField(max_length= 100)
        
     USERNAME_FIELD = "email"
       
@@ -96,7 +96,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 class ComercianteExtranjero(UserAccount):
     #user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     
-    pais = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
 
 
     def save(self , *args , **kwargs):
@@ -107,7 +107,7 @@ class ComercianteExtranjero(UserAccount):
     
 
     def __str__(self):
-        return str(self.nombre)
+        return str(self.firstName)
 
 
 
@@ -119,13 +119,13 @@ class ComercianteExtranjero(UserAccount):
 #         if sender.
 
 class ComercianteLocal(UserAccount):
-    numeroDocumento = models.CharField(max_length=255, blank=True)
-    razonSocial = models.CharField( max_length=50)
+    documentNumber = models.CharField(max_length=255, blank=True)
+    businessName = models.CharField( max_length=50)
     rut = models.CharField(max_length=255, blank=True)
     
 
     def __str__(self):
-        return str(self.user.nombre)
+        return str(self.user.fisrtName)
 
     def save(self , *args , **kwargs):
 
@@ -135,14 +135,14 @@ class ComercianteLocal(UserAccount):
 
 class Productor(UserAccount):
     
-    numeroDocumento = models.CharField(max_length=255, blank=True)
-    razonSocial = models.CharField( max_length=50)
+    documentNumber = models.CharField(max_length=255, blank=True)
+    businessName = models.CharField( max_length=50)
     rut = models.CharField(max_length=255, blank=True)
-    tipoProducto = models.CharField(max_length=255, blank=True)
+    productType = models.CharField(max_length=255, blank=True)
     
 
     def __str__(self):
-        return str(self.user.nombre)
+        return str(self.user.firstName)
 
     def save(self , *args , **kwargs):
 
@@ -153,16 +153,16 @@ class Productor(UserAccount):
 
 class Transportista(UserAccount):
     
-    numeroDocumento = models.CharField(max_length=255, blank=True)
-    razonSocial = models.CharField( max_length=50)
+    documentNumber = models.CharField(max_length=255, blank=True)
+    businessName = models.CharField( max_length=50)
     rut = models.CharField(max_length=255, blank=True)
-    capacidadCarga = models.CharField(max_length=255, blank=True)
-    tamaño=models.IntegerField(null=True)
-    refrigeracion = models.BooleanField(default=False)
+    capacity = models.CharField(max_length=255, blank=True)
+    size=models.IntegerField(null=True)
+    cooling = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return str(self.user.nombre)
+        return str(self.user.firstName)
 
     def save(self , *args , **kwargs):
 

@@ -5,18 +5,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import *
 
-"""
-
-"""
-
-
 
 # It creates a serializer for the UserAccount model.
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserAccount
-        fields = ('type','email', 'password',"nombre","apellido","direccion","telefono","esComercianteExtranjero","esComercianteLocal","esConsultor","esProductor","esTransportista")
+        fields = ('type','email', 'password',"firstName","lastName","address","phone","esComercianteExtranjero","esComercianteLocal","esConsultor","esProductor","esTransportista")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
@@ -28,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComercianteExtranjero
-        fields=('email', 'password',"nombre","apellido","direccion","telefono","pais")
+        fields=('email', 'password',"firstName","lastName","address","phone","country")
 
     password = serializers.CharField(
         min_length=8, write_only=True)
@@ -40,7 +35,7 @@ class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
 class ComercianteLocalSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComercianteLocal
-        fields=('email', 'password',"nombre","apellido","direccion","telefono","numeroDocumento","razonSocial","rut")
+        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
@@ -50,7 +45,7 @@ class ComercianteLocalSignupSerializer(serializers.ModelSerializer):
 class ProductorSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Productor
-        fields=('email', 'password',"nombre","apellido","direccion","telefono","numeroDocumento","razonSocial","rut","tipoProducto")
+        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut","productType")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
@@ -61,7 +56,7 @@ class ProductorSignupSerializer(serializers.ModelSerializer):
 class TransportistaSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transportista
-        fields=('email', 'password',"nombre","apellido","direccion","telefono","numeroDocumento", "razonSocial","rut","capacidadCarga","tamaño","refrigeracion")
+        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber", "businessName","rut","capacity","size","cooling")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
