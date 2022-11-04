@@ -56,7 +56,7 @@ class ProductorSignupSerializer(serializers.ModelSerializer):
 class TransportistaSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transportista
-        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber", "businessName","rut","capacity","size","cooling")
+        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","rut","capacity","size","cooling")
     password = serializers.CharField(
         min_length=8, write_only=True)
 

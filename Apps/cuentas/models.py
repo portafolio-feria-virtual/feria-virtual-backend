@@ -125,7 +125,7 @@ class ComercianteLocal(UserAccount):
     
 
     def __str__(self):
-        return str(self.fisrtName)
+        return str(self.firstName)
 
     def save(self , *args , **kwargs):
 
@@ -154,7 +154,6 @@ class Productor(UserAccount):
 class Transportista(UserAccount):
     
     documentNumber = models.CharField(max_length=255, blank=True)
-    businessName = models.CharField( max_length=50)
     rut = models.CharField(max_length=255, blank=True)
     capacity = models.CharField(max_length=255, blank=True)
     size=models.IntegerField(null=True)

@@ -26,14 +26,17 @@ class ExtranjeroSignupView(generics.CreateAPIView):
 
 #@method_decorator(csrf_protect, name='dispatch')
 class LocalSignupView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny, )
     serializer_class = ComercianteLocalSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
 class ProductorSignupView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny, )
     serializer_class = ProductorSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
 class TransportistaSignupView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny, )
     serializer_class = TransportistaSignupSerializer
 
 
