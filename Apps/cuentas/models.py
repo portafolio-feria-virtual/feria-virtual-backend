@@ -125,7 +125,7 @@ class ComercianteLocal(UserAccount):
     
 
     def __str__(self):
-        return str(self.user.fisrtName)
+        return str(self.fisrtName)
 
     def save(self , *args , **kwargs):
 
@@ -142,7 +142,7 @@ class Productor(UserAccount):
     
 
     def __str__(self):
-        return str(self.user.firstName)
+        return str(self.firstName)
 
     def save(self , *args , **kwargs):
 
@@ -162,7 +162,7 @@ class Transportista(UserAccount):
 
 
     def __str__(self):
-        return str(self.user.firstName)
+        return str(self.firstName)
 
     def save(self , *args , **kwargs):
 
