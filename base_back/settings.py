@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Apps.cuentas',
+    'Apps.solicitudCompra',
     "rest_framework",
     "corsheaders"
 ]
