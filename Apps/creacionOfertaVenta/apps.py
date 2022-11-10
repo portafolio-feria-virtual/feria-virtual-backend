@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CuentasConfig(AppConfig):
+class CreacionofertaventaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'Aplicaciones.cuentas'
+    name = 'Apps.creacionOfertaVenta'
