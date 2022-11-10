@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'Apps.cuentas',
     "rest_framework",
     "corsheaders",
-    "Apps.solicitudCompra",
     "Apps.creacionOfertaVenta",
 ]
 

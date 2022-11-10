@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/',include('Apps.cuentas.urls')),
+    path('oferta/',include('Apps.creacionOfertaVenta.urls')),
 ]
