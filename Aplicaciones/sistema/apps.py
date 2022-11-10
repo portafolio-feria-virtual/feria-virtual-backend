@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CuentasConfig(AppConfig):
+class SistemaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'Apps.cuentas'
+    name = 'Aplicaciones.sistema'
