@@ -13,3 +13,12 @@ class OfertaSerializer(serializers.ModelSerializer):
             return value
         else: 
             raise serializers.ValidationError('Precio unitario debe ser mayor a 0')
+
+
+class VentaLocalSerializer(serializers.ModelSerializer):
+
+    image = serializers.ImageField(required=False)
+
+    class Meta:
+        model = VentaLocal
+        fields= ("productor","name","price","stock","location","image")
