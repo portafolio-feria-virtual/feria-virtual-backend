@@ -12,6 +12,7 @@ class VerContratoSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerContrato
         fields = ('idContract', 'companyName', 'initDate', 'modifyDate', 'endDate', 'fileName')
+        read_only_fields = ('idContract', 'companyName', 'initDate', 'fileName')
 
 class VerProcesoVentasSerializer(serializers.ModelSerializer):
     class Meta:
