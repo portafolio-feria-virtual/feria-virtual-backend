@@ -3,6 +3,4 @@ from .models import *
 
 
 # Register your models here.
-admin.site.register(CrearContrato)
-admin.site.register(VerContrato)
-admin.site.register(VerProcesoVentas)
+admin.site.register(Contrato)
