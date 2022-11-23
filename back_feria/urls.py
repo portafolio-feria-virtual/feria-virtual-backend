@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/productor/',include('Apps.productor.urls')),
     path('api/transportista/',include('Apps.transportista.urls')),
     path('api/consultor/',include('Apps.consultor.urls')),
+    path('api/administrador/',include('Apps.administrador.urls')),
 ]
 
 
