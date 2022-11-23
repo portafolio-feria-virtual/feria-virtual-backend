@@ -7,17 +7,19 @@ from django.utils import timezone
 
 
 # It creates a serializer for the UserAccount model.
-class SolicitudSerializer(serializers.ModelSerializer):
-    
+class LicitacionSerializer(serializers.ModelSerializer):    
     class Meta:
-        model = Solicitud
-        fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate')
+        model = Licitacion
+        fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','extranjero')
     closeDate = serializers.DateTimeField()
+    maxAmount = serializers.IntegerField()
     nowDate = timezone.now()
 
     def validate(self, data):
         if( data['closeDate'] > self.nowDate):
-            
-            return data
-        else:
+            if(data['maxAmount'] > 0):
+                return data
+            else:
+                raise serializers.ValidationError('El monto maximo debe ser mayor que 0')    
+        else :
             raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')

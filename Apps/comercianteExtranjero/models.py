@@ -1,9 +1,9 @@
 from django.db import models
-
+from Apps.cuentas.models import *
 # Create your models here.
 
 # Create your models here.
-class Solicitud(models.Model):
+class Licitacion(models.Model):
     class ProcessStatus(models.TextChoices):
         publicar = "Publicada","Publicada"
         cerrar = "Cerrada","Cerrada"
@@ -24,3 +24,4 @@ class Solicitud(models.Model):
     processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.publicar)
     initDate = models.DateTimeField(auto_now_add= True) 
     closeDate = models.DateTimeField()
+    extranjero = models.ForeignKey(ComercianteExtranjero, on_delete=models.DO_NOTHING) 
