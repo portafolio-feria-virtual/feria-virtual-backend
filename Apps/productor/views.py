@@ -71,6 +71,7 @@ class VentaLocalViewSet(viewsets.ModelViewSet):
         def perform_create(self, serializer):
             file = self.request.FILES['image']
             default_storage.save(file.name, file)
+            file_path = os.path.join(settings.MEDIA_ROOT, file.name)
             storage.child("files/" + file.name).put("media/" + file.name)
             print(file.name)
             default_storage.delete(file.name)
