@@ -6,3 +6,4 @@ from .models import *
 
 
 admin.site.register(Oferta)
+admin.site.register(VentaLocal)
