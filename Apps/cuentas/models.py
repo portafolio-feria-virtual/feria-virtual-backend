@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser,AbstractUser, Permission
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.core.mail import send_mail
+from django.conf import settings
 # Create your models here.
 
 class UserAccountManager(BaseUserManager):
@@ -15,6 +18,7 @@ class UserAccountManager(BaseUserManager):
         user = self.model(
             email = self.normalize_email(email) , 
         )
+        
         user.set_password(password)
         user.save(using = self._db)
         return user
@@ -24,6 +28,7 @@ class UserAccountManager(BaseUserManager):
             email = self.normalize_email(email) , 
             password = password
         )
+        user.is_active = True
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -52,7 +57,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     Las siguientes variables pertenecen a django, por eso utilizan snake_case 
     
     """
-    is_active = models.BooleanField(default = True)
+    is_active = models.BooleanField(default = False)
     is_admin = models.BooleanField(default = False)
     is_staff = models.BooleanField(default = False)
     is_superuser = models.BooleanField(default = False)
@@ -100,7 +105,7 @@ class ComercianteExtranjero(UserAccount):
 
 
     def save(self , *args , **kwargs):
-
+        
         self.type = UserAccount.Types.COMERCIANTE_EXTRANJERO
         self.esComercianteExtranjero = True
         self.is_staff = False
@@ -340,3 +345,15 @@ class Sistema(models.Model):
         """ Metodo para crear reporte por rol """
 
         pass
+
+@receiver(post_save)
+def afterCreateMail(sender, instance=None, created= False, **kwargs):
+    if sender.__name__ in ("ComercianteExtranjero","ComercianteLocal","Productor","Transportista"):
+        if created:
+            print(instance.email)
+
+            subject = f"Bienvenido {instance.firstName} {instance.lastName} a Maipo Grande"
+            message = f"Estimado {instance.firstName} {instance.lastName}:\nEn Maipo Grande estamos muy contentos de contar con tu apoyo.\nEn las proximas horas uno de nuestros ejecutivos se contactará contigo "
+            lista = []
+            lista.append(instance.email)
+            send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)

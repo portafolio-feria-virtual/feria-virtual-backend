@@ -203,6 +203,26 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#Configuracion correo
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+if DEBUG:
+    EMAIL_HOST_USER += env("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD += env("EMAIL_HOST_PASSWORD")
+else:
+    EMAIL_HOST_USER += os.environ.get("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD += os.environ.get("EMAIL_HOST_PASSWORD")
+
+
+
+
 # Configuración Firebase Storage
 '''
 TODO: añadir estos campos como requisito del archivo env, por ahora estan escritos en el archivo views de productor para facilidad de uso
