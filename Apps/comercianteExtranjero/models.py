@@ -22,6 +22,6 @@ class Licitacion(models.Model):
     productList = models.CharField(max_length=255,blank=True) 
     maxAmount = models.IntegerField()
     processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.publicar)
-    initDate = models.DateTimeField(auto_now_add= True) 
-    closeDate = models.DateTimeField()
+    initDate = models.DateField(auto_now_add= True) 
+    closeDate = models.DateField()
     extranjero = models.ForeignKey(ComercianteExtranjero, on_delete=models.DO_NOTHING) 

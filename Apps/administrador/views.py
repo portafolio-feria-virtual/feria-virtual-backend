@@ -22,7 +22,9 @@ class VerContratosView(APIView):
 
 class BuscarContratoView(APIView):
     permission_classes = (permissions.AllowAny,)
-    def get (self, request, companyName):
+    def post (self, request,):
+        data = self.request.data
+        companyName = data['companyName']
         contratos = Contrato.objects.get(companyName=companyName)
         serializer = ContratoSerializer(contratos)
         return Response(serializer.data)

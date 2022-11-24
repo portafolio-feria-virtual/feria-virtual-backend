@@ -1,13 +1,14 @@
 from dataclasses import fields
 from rest_framework import serializers
 from django.utils import timezone
+from datetime import datetime
 from .models import *
 
 class ContratoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contrato
         fields = ('companyName', 'initDate', 'endDate', 'fileName')
-    nowDate = timezone.now()
+    nowDate = datetime.now().date()
     def validate(self, data):
         if( data['endDate'] > self.nowDate):
             

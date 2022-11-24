@@ -202,3 +202,17 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración Firebase Storage
+'''
+TODO: añadir estos campos como requisito del archivo env, por ahora estan escritos en el archivo views de productor para facilidad de uso
+
+API_KEY = env("API_KEY")
+DOMAIN = env("DOMAIN")
+PROJECT_ID = env("PROJECT_ID")
+BUCKET = env("BUCKET")
+SENDER_ID= env("SENDER_ID")
+APP_ID = env("APP_ID")
+MEASUREMENT_ID = env("MEASUREMENT_ID")
+DATABASE_URL = env("DATABASE_URL")
+'''

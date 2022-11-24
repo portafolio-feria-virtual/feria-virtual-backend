@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import *
+from datetime import datetime
 from django.utils import timezone
 
 
@@ -11,9 +12,8 @@ class LicitacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Licitacion
         fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','extranjero')
-    closeDate = serializers.DateTimeField()
-    maxAmount = serializers.IntegerField()
-    nowDate = timezone.now()
+    
+    nowDate = datetime.now().date()
 
     def validate(self, data):
         if( data['closeDate'] > self.nowDate):

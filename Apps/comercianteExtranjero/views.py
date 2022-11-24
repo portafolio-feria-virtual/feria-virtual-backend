@@ -28,7 +28,9 @@ class AddLicitacionView(generics.CreateAPIView):
 class SearchLicitacionView(APIView):
     ''' Obtener lista licitacion segun id licitacion '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request,id):
+    def post(self,request):
+        data = self.request.data
+        id = data["id"]
         licitacion = Licitacion.objects.get(id= id)
         serializers = LicitacionSerializer(licitacion)
         return Response(serializers.data)
