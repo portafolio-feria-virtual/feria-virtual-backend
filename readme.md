@@ -3,53 +3,49 @@
 
 ## Rutas
 
-### 1. Login
+A continuación se muestra el listado de rutas, y los campos que se deberan enviar desde el Front:
 
-Para ejecutar la acción **_Login_**,en el sistema se debe realizar una petición a través del metodo **_POST_** a la dirección:
-    
-    /api/auth/login/
+| Aplicación            	| Ruta                                        	| Parametros                                                                                                                                                                                                                                                                                                                                                       	| Método 	| Función                                                                                                              	| Comentario                                                                                                                                                                                                                                     	|
+|-----------------------	|---------------------------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|--------	|----------------------------------------------------------------------------------------------------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| cuentas               	| api/auth/signupExt/                         	| <code>{ <br>'email':'email@email.com',<br>  'password': 'password',<br> 'firstName': 'Juan',<br> 'lastName':'Perez',<br> 'address': 'Calle falsa 123',<br> 'phone': '56911111111',<br> 'country':'Chile' <br>}</code>                                                                                                                                                                                 	| POST   	| Permite registrar una cuenta de tipo Comerciante Extranjero(internacional)                                           	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/signupLoc/                         	| <code>{ <br>'email':'email@email.com',<br>  'password':'password',<br> 'firstName':'Juan',<br> 'lastName':'Perez',<br> 'address':'Calle Falsa 123',<br> 'phone':'56911111111',<br> 'documentNumber':'123456789',<br> 'businessName':'Verduleria Perez',<br> 'rut': '11.111.111-1' <br>}</code>                                                                                                                	| POST   	| Permite registrar una cuenta de tipo Comerciante Local(Nacional)                                                     	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/signupPro/                         	| <code>{ <br>'email':'email@email.com',<br>  'password':'password',<br> 'firstName':'Juan',<br> 'lastName':'Perez',<br> 'address':'Calle Falsa 123',<br> 'phone':'56911111111',<br> 'documentNumber':'123456789',<br> 'businessName':'Cosechas Perez',<br> 'rut': '11.111.111-1',<br> 'productType': 'Naranjas' <br>}</code>                                                                                       	| POST   	| Permite registrar una cuenta de tipo Productor                                                                       	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/signupTra/                         	| <code>{ <br>'email':'email@email.com',<br> 'password':'password',<br> 'firstName':'Juan',<br> 'lastName':'Perez',<br> 'address':'Calle falsa 123',<br> 'phone':'56911111111',<br> 'documentNumber':'123456789',<br> 'rut':'11.111.111-1',<br> 'capacity':'1700',<br> 'size':'28',<br> 'cooling': 'True' <br>}</code>                                                                                                  	| POST   	| Permite registrar una cuenta de tipo Transportista                                                                   	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/login/                             	| <code>{ <br>'email':'email@email.com',<br> 'password':'password' <br>}</code>                                                                                                                                                                                                                                                                                                     	| POST   	| Permite iniciar sesión a través de las credenciales creadas con las rutas de Signup                                  	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/logout/                            	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| POST   	| Permite cerrar la sesión actual                                                                                      	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/user/                              	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| GET    	| Permite retornar los datos del usuario actual                                                                        	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/isAuthenticated/                   	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| GET    	| Permite saber si el usuario actual se encuentra autenticado o es una cuenta anonima                                  	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/csrf_cookie                        	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| GET    	| Permite obtener una cookie CSRF                                                                                      	|                                                                                                                                                                                                                                                	|
+| cuentas               	| api/auth/delete                             	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| DELETE 	| Permite eliminar la cuenta del usuario actualmente en sesión                                                         	|                                                                                                                                                                                                                                                	|
+| administrador         	| api/administrador/addContract/              	| <code>{ <br> 'companyName':'Cosechas Pérez',<br>  'initDate':'2022-11-24',<br>  'endDate':'2022-11-30',<br>  'fileName':'archivos.png' <br>}</code>                                                                                                                                                                                                                                        	| POST   	| Permite añadir un contrato al sistema                                                                                	|                                                                                                                                                                                                                                                	|
+| administrador         	| api/administrador/viewContract/             	| _No posee parametros_                                                                                                                                                                                                                                                                                                                                            	| GET    	| Permite ver todos los contratos ingresados en el sistema                                                             	|                                                                                                                                                                                                                                                	|
+| administrador         	| api/administrador/buscarContrato/           	| <code>{ <br> 'companyName':'Cosechas Pérez' <br>}</code>                                                                                                                                                                                                                                                                                                                       	| POST   	| Permite buscar __1__ contrato a través del nombre de la compañia                                                     	|                                                                                                                                                                                                                                                	|
+| comercianteExtranjero 	| api/comercianteExtranjero/createLicitacion/ 	| <code>{ <br> 'name':'Compra de Naranjas',<br> 'description':'Se necesitan 3 toneladas de Naranjas',<br> 'country':'Chile',<br> 'region':'Valparaiso',<br> 'city':'San Antonio',<br> 'street':'Calle Falsa 123',<br> 'postalCode':'2660000',<br> 'productList':'Naranjas',<br> 'maxAmount':'3000',<br> 'processStatus':'Publicada',<br> 'initDate':'2022-11-24',<br> 'closeDate':'2022-11-30',<br> 'extranjero': 4 <br>}</code> 	| POST   	| Permite crear una licitación                                                                                         	| -Deberiamos eliminar el campo de region -El campo extranjero se refiere al usuario actual que esta creando la licitacion, más adelante deberá ser un campo read only, y ponerse de manera automatica de acuerdo a los datos del usuario actual 	|
+| comercianteExtranjero 	| api/comercianteExtranjero/searchLicitacion/ 	| <code>{ <br> 'id':1 <br>}</code>                                                                                                                                                                                                                                                                                                                                               	| POST   	| Permite buscar una licitación por su ID                                                                              	|                                                                                                                                                                                                                                                	|
+| productor             	| api/productor/createOffer/                  	| <code>{ <br> 'name':'',<br>  'description':'',<br>  'productorDescription':'',<br>  'offer':'',<br>  'unitPrice':'',<br> 'adminArchives':'',<br>  'techArchives':'',<br>  'economicArchives':'' <br>}</code>                                                                                                                                                                                               	| POST   	| Permite crear una oferta hacia una licitación creada previamente por un comerciante extranjero                       	| - Falta el campo que identifique la licitación o añadir una relacion uno a muchos con el modelo de la licitación - No sé a que se refieren algunos campos, asi que lo deje en blanco por ahora                                                 	|
+| productor             	| api/productor/createSale/                   	| <code>{ <br> 'productor':2,<br> 'name':'Venta de papas',<br> 'stock':'300',<br> 'location':'San Antonio',<br> 'image':'http://127.0.0.1/media/imagen.jpg' <br>}</code>                                                                                                                                                                                                                         	| POST   	| Permite al usuario crear una publicación/venta en el marketplace, a la cual pueden postular los comerciantes locales 	| - El campo productor se refiere al productor que esta creando la venta, que deberia ser el usuario que se encuentra en sesión, este campo debera ser read only y agregado de manera automatica                                                 	|
 
-Para que la acción de **_Login_** se efectue de manera correcta, se debe entregar un parametro en formato **_JSON_** con la siguiente estructura:
-```json
-    {
-        "email": "email@email.com",
-        "password": "password"
-    }
+## Variables de entorno
+
+Para que el proyecto funcione correctamente, se debe crear un archivo de varibales de entorno(_.env_) en el directorio que se encuentre _settings.py_
+
+Debe contener las siguientes variables(también pueden cambiar sus nombres si así lo desean):
+|Variables|
+|---|
+|DATABASE_NAME|
+|DATABASE_USER|
+|DATABASE_PASS|
+|DATABASE_PORT|
+
+Ejemplo:
+
+_En el archivo .env_
 ```
-### 2. Logout
-
-Para ejecutar la acción **_Logout_**, en el sistema se debe realizar una petición a través del metodo **_POST_** a la dirección:
-
-    /api/auth/logout/
-
-Para que la acción de **_Logout_** se efectue de manera correcta, se debe enviar una **_petición POST vacia_**
-
-
-### 3. Signup
-
-Para que la acción de **_Signup_** se efectue de manera correcta, se debe se debe entregar un parametro en formato **_JSON_** con la siguiente estructura:
-
-```json
-    {
-        "email": "correo@correo.com",
-        "username": "Nombre de usuario", 
-        "password": "12345678"
-    }
+DATABASE_NAME=portafolio_local
+DATABASE_USER=postgres
+DATABASE_PASS=123
+DATABASE_PORT=5432
 ```
-### 4. Password Reset 
-
-Para que la acción de **_Password Reset_** se inicie se debe ir a la dirección :
-
-    api/auth/reset/
-
-Para que la acción de **_Password Reset_** se efectue de manera correcta se debe entregar un parametro en formato **_JSON_** con el siguiente formato:
-
-```json
-{
-    "email": "email@email.com"
-}
-```
-
 
 
 

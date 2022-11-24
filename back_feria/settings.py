@@ -1,6 +1,12 @@
 from pathlib import Path
 import os
 import dj_database_url
+import environ
+
+# inciailización de variables de entorno
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 #SECRET_KEY = 'django-insecure-svv6v0rfjwv76zacd$v@jmalcu%rqt97!y4-yrppg8z=c%3_)7'
-SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+SECRET_KEY = os.environ.get('SECRET_KEY', default=env("SECRET_KEY"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
@@ -101,7 +107,7 @@ WSGI_APPLICATION = 'back_feria.wsgi.application'
 
 DATABASES = {
     'default':  dj_database_url.config(
-        default='postgres://postgres:123@localhost:5432/portafolio_local',        conn_max_age=600  )
+        default=f'postgres://{env("DATABASE_USER")}:{env("DATABASE_PASS")}@localhost:{env("DATABASE_PORT")}/{env("DATABASE_NAME")}',        conn_max_age=600  )
 }
 # DATABASES = {
 #     'default':  dj_database_url.config(
@@ -196,3 +202,17 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración Firebase Storage
+'''
+TODO: añadir estos campos como requisito del archivo env, por ahora estan escritos en el archivo views de productor para facilidad de uso
+
+API_KEY = env("API_KEY")
+DOMAIN = env("DOMAIN")
+PROJECT_ID = env("PROJECT_ID")
+BUCKET = env("BUCKET")
+SENDER_ID= env("SENDER_ID")
+APP_ID = env("APP_ID")
+MEASUREMENT_ID = env("MEASUREMENT_ID")
+DATABASE_URL = env("DATABASE_URL")
+'''
