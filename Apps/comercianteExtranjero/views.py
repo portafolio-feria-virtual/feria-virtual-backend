@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .serializers import *
 from rest_framework import status, generics
+from rest_framework.response import Response
 from django.contrib.auth.decorators import user_passes_test
 from rest_framework.views import APIView
 from rest_framework import permissions
@@ -23,6 +24,16 @@ class LicitacionView(UserPassesTestMixin, generics.CreateAPIView):
 class AddLicitacionView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = LicitacionSerializer
+
+class SearchLicitacionView(APIView):
+    ''' Obtener lista licitacion segun id licitacion '''
+    permission_classes = (permissions.AllowAny, )
+    def get(self,request,id):
+        licitacion = Licitacion.objects.get(id= id)
+        serializers = LicitacionSerializer(licitacion)
+        return Response(serializers.data)
+
+
 
 
     
