@@ -1,4 +1,7 @@
 db.sqlite3
+.env
 venv
 __pycache__
+__pycache__/
+*/__pycache__/*
 staticfiles
