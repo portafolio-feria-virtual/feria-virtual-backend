@@ -4,7 +4,8 @@ from rest_framework import status, generics, viewsets, permissions
 from rest_framework.response import Response
 from .serializers import *
 from .models import *
-
+from Apps.comercianteExtranjero.models import Licitacion
+from Apps.comercianteExtranjero.serializers import LicitacionSerializer
 
 
 
@@ -28,7 +29,13 @@ class BuscarContratoView(APIView):
         contratos = Contrato.objects.get(companyName=companyName)
         serializer = ContratoSerializer(contratos)
         return Response(serializer.data)
-    
+        
+class VerLicitacionView(APIView):
+    permission_classes = (permissions.AllowAny, )
+    def get (self, request):
+        solicitud = Licitacion.objects.all()
+        serializer = LicitacionSerializer(solicitud, many=True)
+        return Response(serializer.data)
         
 
 
