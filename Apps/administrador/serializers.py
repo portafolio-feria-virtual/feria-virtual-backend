@@ -7,7 +7,7 @@ from .models import *
 class ContratoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contrato
-        fields = ('companyName', 'initDate', 'endDate', 'fileName')
+        fields = ('type','companyName', 'initDate', 'endDate', 'fileName')
     nowDate = datetime.now().date()
     def validate(self, data):
         if( data['endDate'] > self.nowDate):

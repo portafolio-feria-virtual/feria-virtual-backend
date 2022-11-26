@@ -4,8 +4,10 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail
-from django.conf import settings
+
 # Create your models here.
 
 class UserAccountManager(BaseUserManager):
@@ -100,7 +102,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 class ComercianteExtranjero(UserAccount):
     #user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    
+    businessName = models.CharField( max_length=50)
     country = models.CharField(max_length=255)
 
 
@@ -213,7 +215,7 @@ class Productor(UserAccount):
 
 
 class Transportista(UserAccount):
-    
+    businessName = models.CharField( max_length=50)
     documentNumber = models.CharField(max_length=255, blank=True)
     rut = models.CharField(max_length=255, blank=True)
     capacity = models.CharField(max_length=255, blank=True)
@@ -357,3 +359,19 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
             lista = []
             lista.append(instance.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
+
+    send_mail(
+        # title:
+        "Password Reset for {title}".format(title="Some website title"),
+        # message:
+        email_plaintext_message,
+        # from:
+        "noreply@somehost.local",
+        # to:
+        [reset_password_token.user.email]
+    )

@@ -16,9 +16,16 @@ class OfertaSerializer(serializers.ModelSerializer):
 
 
 class VentaLocalSerializer(serializers.ModelSerializer):
-
-    image = serializers.ImageField(required=False)
-
     class Meta:
         model = VentaLocal
-        fields= ("productor","name","price","stock","location","image")
+        fields= '__all__'
+
+    def create(self, validated_data):
+        images = self.context["images"]
+        ventaLocal = VentaLocal.objects.create(**validated_data)
+        for image in images:
+            ImagenVentaLocal.objects.create(ventaLocal=ventaLocal, image=image )
+
+        return ventaLocal
+
+    

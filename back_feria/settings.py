@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Aplicaciones utilitarias
     "corsheaders",
     "rest_framework",
+    "django_rest_passwordreset",
 
 
     
@@ -161,9 +162,11 @@ REST_FRAMEWORK = {
 #Configuracion CORS
 #
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000','http://localhost:5173','https://portafolio-frontend.onrender.com']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000','http://localhost:5173','https://portafolio-frontend.onrender.com',"http://127.0.0.1:5501"]
 #CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ('content-disposition', 'accept-encoding',
+                      'content-type', 'accept', 'origin', 'authorization')
 
 
 #Configuracion CSRF
