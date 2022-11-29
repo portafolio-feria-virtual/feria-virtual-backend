@@ -6,8 +6,10 @@ from .serializers import *
 from .models import *
 from Apps.comercianteExtranjero.models import Licitacion
 from Apps.comercianteExtranjero.serializers import LicitacionSerializer
-
-
+from Apps.productor.models import Oferta
+from Apps.productor.serializers import OfertaSerializer
+from Apps.productor.models import VentaLocal
+from Apps.productor.serializers import VentaLocalSerializer
 
 # Create your views here.
 class CrearContratoView(generics.CreateAPIView):
@@ -37,6 +39,20 @@ class VerLicitacionView(APIView):
         serializer = LicitacionSerializer(solicitud, many=True)
         return Response(serializer.data)
         
+class VerOfertaView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def get(self, request):
+        oferta = Oferta.objects.all()
+        serializer = OfertaSerializer(oferta, many=True)
+        return Response(serializer.data)
+
+class VerVentaLocalView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def get(self, request):
+        def get(self, request):
+            ventaLocal = VentaLocal.objects.all()
+            serializer = VentaLocalSerializer(ventaLocal, many=True)
+            return Response(serializer.data)
 
 
 
