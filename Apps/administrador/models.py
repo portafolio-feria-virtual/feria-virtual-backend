@@ -7,5 +7,7 @@ class Contrato(models.Model):
     initDate = models.DateField(auto_now_add=True)
     modifyDate = models.DateField(auto_now=True)
     endDate = models.DateField(blank=True, null=True)
+    isActive = models.BooleanField(default=True)
     fileName = models.CharField(max_length=255, blank=True)
+    
 

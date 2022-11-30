@@ -31,6 +31,17 @@ class BuscarContratoView(APIView):
         contratos = Contrato.objects.get(companyName=companyName)
         serializer = ContratoSerializer(contratos)
         return Response(serializer.data)
+
+class EditarContratosView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def put(self, request):
+        data = self.request.data
+        contrato = Contrato.objects.get(id = data['id'])
+        serializer = ContratoSerializer(contrato, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class VerLicitacionView(APIView):
     permission_classes = (permissions.AllowAny, )
