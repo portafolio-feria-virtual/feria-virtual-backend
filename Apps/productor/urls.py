@@ -4,6 +4,7 @@ from rest_framework import routers
 router  = routers.DefaultRouter()
 # router.register(r'createSale', VentaLocalViewSet)
 
+
 urlpatterns = [
      path('createOffer/', OfertaView.as_view()),
      path('createSale/', VentaLocalCreateView.as_view()),

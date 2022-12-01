@@ -20,6 +20,7 @@ class Contrato(models.Model):
     endDate = models.DateField(blank=True, null=True)
     isActive = models.BooleanField(default=True)
     fileName = models.CharField(max_length=255, blank=True)
+    
 
 @receiver(pre_save, sender=Contrato)
 def checkType(sender, instance=None, **kwargs):
