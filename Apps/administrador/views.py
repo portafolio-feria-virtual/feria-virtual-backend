@@ -6,8 +6,6 @@ from .serializers import *
 from .models import *
 
 
-
-
 # Create your views here.
 class CrearContratoView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)

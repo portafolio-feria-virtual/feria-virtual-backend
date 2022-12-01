@@ -6,7 +6,7 @@ from .models import *
 class OfertaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Oferta
-        fields = ('name', 'description', 'productorDescription', 'offer', 'unitPrice','adminArchives', 'techArchives', 'economicArchives')
+        fields = '__all__'
 
     def validate_unitPrice (self, value):
         if value >0:
@@ -20,12 +20,19 @@ class VentaLocalSerializer(serializers.ModelSerializer):
         model = VentaLocal
         fields= '__all__'
 
-    def create(self, validated_data):
-        images = self.context["images"]
-        ventaLocal = VentaLocal.objects.create(**validated_data)
-        for image in images:
-            ImagenVentaLocal.objects.create(ventaLocal=ventaLocal, image=image )
+    # def create(self, validated_data):
+    #     images = self.context["images"]
+    #     ventaLocal = VentaLocal.objects.create(**validated_data)
+    #     for image in images:
+    #         ImagenVentaLocal.objects.create(ventaLocal=ventaLocal, image=image )
 
-        return ventaLocal
+    #     return ventaLocal
+
+
+class ImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ImagenVentaLocal
+        fields = '__all__'
 
     

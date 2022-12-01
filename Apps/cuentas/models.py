@@ -218,9 +218,7 @@ class Transportista(UserAccount):
     businessName = models.CharField( max_length=50)
     documentNumber = models.CharField(max_length=255, blank=True)
     rut = models.CharField(max_length=255, blank=True)
-    capacity = models.CharField(max_length=255, blank=True)
-    size=models.IntegerField(null=True)
-    cooling = models.BooleanField(default=False)
+    
 
 
 
@@ -255,14 +253,7 @@ class Consultor(UserAccount):
         return super().save(*args , **kwargs)
 
 
-class MetodoTransporte(models.Model):
-    
-    tipo =  models.CharField(max_length=255, blank=True)
-    description =  models.CharField(max_length=255, blank=True)
-    transportista = models.ForeignKey(Transportista, on_delete=models.DO_NOTHING)
 
-    def __str__(self):
-        return str(self.description)
 
     
 

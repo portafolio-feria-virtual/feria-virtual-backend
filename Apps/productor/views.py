@@ -5,7 +5,7 @@ import os
 from django.shortcuts import render
 from rest_framework import status, generics
 from rest_framework.response import Response
-from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
 from django.conf import settings
 
@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework import permissions, viewsets
 from .serializers import *
+import uuid
 
 
 
@@ -38,6 +39,10 @@ class OfertaView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = OfertaSerializer
 
+class VerOfertas(generics.ListAPIView):
+  permission_classes = (permissions.AllowAny, )
+  queryset = Oferta.objects.all()
+  serializer_class = OfertaSerializer
 
 # class VentaLocalView(generics.CreateAPIView):
 #     permission_classes = (permissions.AllowAny, )
@@ -62,28 +67,34 @@ class OfertaView(generics.CreateAPIView):
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-@method_decorator(csrf_exempt, name='dispatch')
-class VentaLocalViewSet(viewsets.ModelViewSet):
-        queryset = VentaLocal.objects.all()
-        serializer_class = VentaLocalSerializer
-        permission_classes = [permissions.AllowAny]
-        http_method_names = ["post","get"]
 
-        def create(self, request, *args, **kwargs):
-          images = request.FILES.getlist('image', None)
-          data = {
-            "productor": request.POST.get("productor",None),
-            "name": request.POST.get("name",None),
-            "price": request.POST.get("price",None),
-            "stock": request.POST.get("stock",None),
-            "location": request.POST.get("location",None),
-          }
-          _serializer = self.serializer_class(data =data, context ={'images':images})
-          if _serializer.is_valid():
-            _serializer.save()
-            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
-          else:
-            return Response(data=_serializer.erors, status = status.HTTP_400_BAD_REQUEST)
+class VentaLocalCreateView(generics.CreateAPIView):
+  permission_classes = (permissions.AllowAny, )
+  serializer_class = VentaLocalSerializer
+
+
+# @method_decorator(csrf_exempt, name='dispatch')
+# class VentaLocalViewSet(viewsets.ModelViewSet):
+#         queryset = VentaLocal.objects.all()
+#         serializer_class = VentaLocalSerializer
+#         permission_classes = [permissions.AllowAny]
+#         http_method_names = ["post","get"]
+
+#         def create(self, request, *args, **kwargs):
+#           images = request.FILES.getlist('image', None)
+#           data = {
+#             "productor": request.POST.get("productor",None),
+#             "name": request.POST.get("name",None),
+#             "price": request.POST.get("price",None),
+#             "stock": request.POST.get("stock",None),
+#             "location": request.POST.get("location",None),
+#           }
+#           _serializer = self.serializer_class(data =data, context ={'images':images})
+#           if _serializer.is_valid():
+#             _serializer.save()
+#             return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
+#           else:
+#             return Response(data=_serializer.erors, status = status.HTTP_400_BAD_REQUEST)
 
         # def perform_create(self, serializer):
         #     file = self.request.FILES['image']
@@ -118,3 +129,65 @@ class VentaLocalViewSet(viewsets.ModelViewSet):
 #     serializers = VentaLocalSerializer()
 #     serializer.save()
 
+# class ImagenVentaLocalView(APIView):
+#   permission_classes = [permissions.AllowAny]
+
+#   def post(self, request):
+#     data = self.request.data
+#     file = self.request.FILES["image"]
+#     default_storage.save(file.name, file)
+#     storage.child("files/" + file.name).put("media/" + file.name)
+#     print(file.name)
+#     print(default_storage.exists(file.name))
+#     default_storage.delete(file.name)
+#     serializer = ImageSerializer(data=data)
+#     serializer.save()
+#     return Response(serializer.data)
+
+class ImagenVentaLocalView(generics.CreateAPIView):
+  model = ImagenVentaLocal
+  permission_classes = [permissions.AllowAny]
+  serializer_class = ImageSerializer
+
+  def perform_create(self, serializer):
+    fs = FileSystemStorage()
+    data = self.request.data
+    file = self.request.FILES['image']
+    ventaLocal = VentaLocal.objects.get(id=data["ventaLocal"])
+    productor = Productor.objects.get(id=ventaLocal.productor.id)
+    print(ventaLocal)
+    print(file)
+    filename = fs.save(file.name, file)
+    file_url = fs.url(filename)
+    print(filename)
+    print(file_url)
+    storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
+    serializer.save()
+    
+    
+       
+
+
+class AceptarRechazarAdjudicacion(APIView):
+  """ Vista que permite aceptar o rechazar"""
+  permission_classes = [permissions.AllowAny]
+  def post(self, request):
+    data = self.request.data
+    id = data["id"]
+    oferta = Oferta.objects.get(id=id)
+    option = data["option"]
+    if option=="Accept":
+      oferta.accepted = "ACCEPTED"
+    if option == "Reject":  
+      oferta.accepted= "REJECTED"
+    
+    serializer = OfertaSerializer(oferta)
+
+    return Response(serializer.data)
+    
+    
+
+
+class EstadoTransporteView(APIView):
+  """ Metodo que retorna el estado del transporte/envio"""
+  pass

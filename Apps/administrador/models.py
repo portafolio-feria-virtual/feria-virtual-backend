@@ -13,15 +13,7 @@ class Contrato(models.Model):
         COMERCIANTE_EXTRANJERO = "COMERCIANTE EXTRANJERO" , "comerciante extranjero"
         CONSULTOR = "CONSULTOR","consultor"
         PRODUCTOR = "PRODUCTOR", "productor"
-        
-
-
-        
-          
-    type = models.CharField(max_length = 30 , choices = Types.choices , 
-                            # Default is user is teacher
-                            default = Types.COMERCIANTE_LOCAL)
-    
+    type = models.CharField(max_length = 30 , choices = Types.choices , default = Types.COMERCIANTE_LOCAL)
     companyName = models.CharField(max_length=255, blank=True)
     initDate = models.DateField(auto_now_add=True)
     modifyDate = models.DateField(auto_now=True)
