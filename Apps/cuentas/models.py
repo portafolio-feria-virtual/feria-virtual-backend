@@ -3,6 +3,11 @@ from django.contrib.auth.models import AbstractBaseUser,AbstractUser, Permission
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail
+
 # Create your models here.
 
 class UserAccountManager(BaseUserManager):
@@ -15,6 +20,7 @@ class UserAccountManager(BaseUserManager):
         user = self.model(
             email = self.normalize_email(email) , 
         )
+        
         user.set_password(password)
         user.save(using = self._db)
         return user
@@ -24,6 +30,7 @@ class UserAccountManager(BaseUserManager):
             email = self.normalize_email(email) , 
             password = password
         )
+        user.is_active = True
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -52,7 +59,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     Las siguientes variables pertenecen a django, por eso utilizan snake_case 
     
     """
-    is_active = models.BooleanField(default = True)
+    is_active = models.BooleanField(default = False)
     is_admin = models.BooleanField(default = False)
     is_staff = models.BooleanField(default = False)
     is_superuser = models.BooleanField(default = False)
@@ -95,12 +102,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 class ComercianteExtranjero(UserAccount):
     #user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    
+    businessName = models.CharField( max_length=50)
     country = models.CharField(max_length=255)
 
 
     def save(self , *args , **kwargs):
-
+        
         self.type = UserAccount.Types.COMERCIANTE_EXTRANJERO
         self.esComercianteExtranjero = True
         self.is_staff = False
@@ -208,12 +215,10 @@ class Productor(UserAccount):
 
 
 class Transportista(UserAccount):
-    
+    businessName = models.CharField( max_length=50)
     documentNumber = models.CharField(max_length=255, blank=True)
     rut = models.CharField(max_length=255, blank=True)
-    capacity = models.CharField(max_length=255, blank=True)
-    size=models.IntegerField(null=True)
-    cooling = models.BooleanField(default=False)
+    
 
 
 
@@ -248,14 +253,7 @@ class Consultor(UserAccount):
         return super().save(*args , **kwargs)
 
 
-class MetodoTransporte(models.Model):
-    
-    tipo =  models.CharField(max_length=255, blank=True)
-    description =  models.CharField(max_length=255, blank=True)
-    transportista = models.ForeignKey(Transportista, on_delete=models.DO_NOTHING)
 
-    def __str__(self):
-        return str(self.description)
 
     
 
@@ -340,3 +338,31 @@ class Sistema(models.Model):
         """ Metodo para crear reporte por rol """
 
         pass
+
+@receiver(post_save)
+def afterCreateMail(sender, instance=None, created= False, **kwargs):
+    if sender.__name__ in ("ComercianteExtranjero","ComercianteLocal","Productor","Transportista"):
+        if created:
+            print(instance.email)
+
+            subject = f"Bienvenido {instance.firstName} {instance.lastName} a Maipo Grande"
+            message = f"Estimado {instance.firstName} {instance.lastName}:\nEn Maipo Grande estamos muy contentos de contar con tu apoyo.\nEn las proximas horas uno de nuestros ejecutivos se contactará contigo "
+            lista = []
+            lista.append(instance.email)
+            send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
+
+    send_mail(
+        # title:
+        "Password Reset for {title}".format(title="Some website title"),
+        # message:
+        email_plaintext_message,
+        # from:
+        "noreply@somehost.local",
+        # to:
+        [reset_password_token.user.email]
+    )

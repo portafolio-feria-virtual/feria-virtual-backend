@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Aplicaciones utilitarias
     "corsheaders",
     "rest_framework",
+    "django_rest_passwordreset",
 
 
     
@@ -161,9 +162,11 @@ REST_FRAMEWORK = {
 #Configuracion CORS
 #
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000','http://localhost:5173','https://portafolio-frontend.onrender.com']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000','http://localhost:5173','https://portafolio-frontend.onrender.com',"http://127.0.0.1:5501"]
 #CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ('content-disposition', 'accept-encoding',
+                      'content-type', 'accept', 'origin', 'authorization')
 
 
 #Configuracion CSRF
@@ -202,6 +205,26 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Configuracion correo
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+if DEBUG:
+    EMAIL_HOST_USER += env("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD += env("EMAIL_HOST_PASSWORD")
+else:
+    EMAIL_HOST_USER += os.environ.get("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD += os.environ.get("EMAIL_HOST_PASSWORD")
+
+
+
 
 # Configuración Firebase Storage
 '''

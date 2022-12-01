@@ -18,6 +18,15 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         return make_password(value)
 
+class ChangePasswordSerializer(serializers.Serializer):
+    model = UserAccount
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 
 # A serializer class that is used to convert the data into JSON format.
 class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
