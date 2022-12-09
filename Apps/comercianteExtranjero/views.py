@@ -14,8 +14,14 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle
 from datetime import datetime
+from Apps.productor.models import Oferta
+from Apps.productor.serializers import OfertaSerializer
+from Apps.transportista.models import  *
+
+
 # def check_type(user):
-#     return user.type == "transportista"
+#     
+user.type == "transportista"
 
 
 # @user_passes_test(check_type)
@@ -35,6 +41,7 @@ class AddLicitacionView(generics.CreateAPIView):
 class SearchLicitacionView(APIView):
     ''' Obtener una licitacion segun id de la licitacion '''
     permission_classes = (permissions.AllowAny, )
+    #serializer_class = LicitacionSerializer
     def post(self,request):
         data = self.request.data
         id = data["id"]
@@ -89,7 +96,8 @@ class EditCloseDateView(APIView):
 class UpdateLicitacion(UpdateAPIView):
     '''Modificar datos de una licitacion segun id licitacion'''
     permission_classes = (permissions.AllowAny, )
-    throttle_classes = [UserRateThrottle]
+    throttle_classes = [
+    Throttle]
 
     queryset = Licitacion.objects.all()
     serializer_class = LicitacionSerializer
@@ -157,6 +165,35 @@ class EstadoEnvioLicitacionView(APIView):
         return Response(serializers.data)
 
 
+
+
+class SeeAllLicitacionWithOfferView(APIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = LicitacionWithOfertaSerializer
+
+    def get(self, request):
+        licitacion = Licitacion.objects.all().filter(extranjero= self.request.user.id)
+        serializador = self.serializer_class(licitacion, many=True)
+        return Response(serializador.data)
+
+
+class AsignarRechazarOfertaLicitacion(APIView):
+  """ Vista que permite asignar o rechazar la oferta que ha recibido una licitación """
+  permission_classes = [permissions.AllowAny]
+  def post(self, request):
+    data = self.request.data
+    id = data["id"]
+    oferta = Oferta.objects.get(id=id)
+    option = data["option"]
+    if option=="Accept":
+      oferta.assigned = True
+      oferta.accepted = "ACCEPTED"
+    if option == "Reject":  
+      oferta.assigned= False
+      oferta.accepted = "REJECTED"
+      oferta.closed= True
+
+    
 
 
 

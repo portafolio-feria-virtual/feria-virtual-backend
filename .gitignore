@@ -6,4 +6,5 @@ __pycache__/
 */__pycache__/*
 staticfiles
 vscode
+.pytest_cache
 .vscode

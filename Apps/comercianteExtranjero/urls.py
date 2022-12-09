@@ -12,5 +12,5 @@ urlpatterns=[
     path('aceptarOfertaProductor/',AceptarRechazarOfertaProductorView.as_view()),
     path('aceptarPostulacionTransportista/',AceptarRechazarPostulacionTrasporteView.as_view()),
     path('estadoEnvioLicitacion/<int:licitacion>',EstadoEnvioLicitacionView.as_view()),
-    
+    #path('seeLicitacionOfertasUser/', SeeAllLicitacionWithOfferView.as_view()),
 ]
