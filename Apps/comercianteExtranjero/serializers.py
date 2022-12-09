@@ -23,3 +23,10 @@ class LicitacionSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('El monto maximo debe ser mayor que 0')    
         else :
             raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')
+
+class LicitacionWithOfertaSerializer(serializers.ModelSerializer):
+    oferta_set = serializers.StringRelatedField(many=True)
+    postulacionlicitaciontransporte_set = serializers.StringRelatedField(many=True)
+    class Meta:
+        model= Licitacion
+        fields= ("__all__")

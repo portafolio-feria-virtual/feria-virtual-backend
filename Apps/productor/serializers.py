@@ -36,3 +36,9 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     
+# class OfertaWithPostulacionTransporteSerializer(serializers.ModelSerializer):
+#     postulacionlicitaciontransporte_set = serializers.StringRelatedField(many=True)
+    
+#     class Meta:
+#         model= Licitacion
+#         fields= ("__all__")

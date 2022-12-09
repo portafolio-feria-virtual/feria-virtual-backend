@@ -9,12 +9,15 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
 from django.conf import settings
 
+from Apps.transportista.models import *
 from rest_framework.parsers import FileUploadParser, MultiPartParser,FormParser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework import permissions, viewsets
 from .serializers import *
+from Apps.transportista.models import *
+from Apps.transportista.serializers import *
 import uuid
 
 
@@ -39,110 +42,19 @@ class OfertaView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = OfertaSerializer
 
-class VerOfertas(generics.ListAPIView):
-  permission_classes = (permissions.AllowAny, )
-  queryset = Oferta.objects.all()
-  serializer_class = OfertaSerializer
+class SeeAllOfferView(APIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = OfertaSerializer
 
-# class VentaLocalView(generics.CreateAPIView):
-#     permission_classes = (permissions.AllowAny, )
-#     serializer_class= VentaLocalSerializer
+    def get(self, request):
+        ofertas = Oferta.objects.all().filter(productor= self.request.user.id)
+        serializador = self.serializer_class(ofertas, many=True)
+        return Response(serializador.data)
 
-
-
-# class VentaLocalView(APIView):
-#     form_class = VentaLocalForm
-#     # A class that is used to parse the file.
-#     #parser_classes = (FileUploadParser)
-
-#     def post(self, request, format=None):
-#         serializer = VentaLocalSerializer(data=request.data)
-#         file = request.FILES['file']
-#         file_save = default_storage.save(file.name, file)
-#         storage.child("files/" + file.name).put("media/" + file.name)
-#         delete = default_storage.delete(file.name)
-
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class VentaLocalCreateView(generics.CreateAPIView):
   permission_classes = (permissions.AllowAny, )
   serializer_class = VentaLocalSerializer
-
-
-# @method_decorator(csrf_exempt, name='dispatch')
-# class VentaLocalViewSet(viewsets.ModelViewSet):
-#         queryset = VentaLocal.objects.all()
-#         serializer_class = VentaLocalSerializer
-#         permission_classes = [permissions.AllowAny]
-#         http_method_names = ["post","get"]
-
-#         def create(self, request, *args, **kwargs):
-#           images = request.FILES.getlist('image', None)
-#           data = {
-#             "productor": request.POST.get("productor",None),
-#             "name": request.POST.get("name",None),
-#             "price": request.POST.get("price",None),
-#             "stock": request.POST.get("stock",None),
-#             "location": request.POST.get("location",None),
-#           }
-#           _serializer = self.serializer_class(data =data, context ={'images':images})
-#           if _serializer.is_valid():
-#             _serializer.save()
-#             return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
-#           else:
-#             return Response(data=_serializer.erors, status = status.HTTP_400_BAD_REQUEST)
-
-        # def perform_create(self, serializer):
-        #     file = self.request.FILES['image']
-        #     default_storage.save(file.name, file)
-        #     storage.child("files/" + file.name).put("media/" + file.name)
-        #     print(file.name)
-        #     default_storage.delete(file.name)
-        # #     serializer.save()
-        # def perform_create(self, serializer):
-
-        #   for f in self.request.data.getList("image"):
-        #     default_storage.save(f.name, f)
-        #     storage.child("files/" +self.request.data["productor"]+self.request.data["name"] +f.name).put("media/" + f.name)
-        #     print(f.name)
-        #     default_storage.delete(f.name)
-        #     serializer.save()
-            
-            
-# class VentaLocalView(APIView):
-
-#   parser_classes = (MultiPartParser, FormParser)
-#   permission_classes = [permissions.AllowAny]
-
-#   def post(self, request):
-#     data = self.request.data
-#     file = self.request.FILES["image"]
-#     default_storage.save(file.name, file)
-#     storage.child("files/" + file.name).put("media/" + file.name)
-#     print(file.name)
-#     print(default_storage.exists(file.name))
-#     default_storage.delete(file.name)
-#     serializers = VentaLocalSerializer()
-#     serializer.save()
-
-# class ImagenVentaLocalView(APIView):
-#   permission_classes = [permissions.AllowAny]
-
-#   def post(self, request):
-#     data = self.request.data
-#     file = self.request.FILES["image"]
-#     default_storage.save(file.name, file)
-#     storage.child("files/" + file.name).put("media/" + file.name)
-#     print(file.name)
-#     print(default_storage.exists(file.name))
-#     default_storage.delete(file.name)
-#     serializer = ImageSerializer(data=data)
-#     serializer.save()
-#     return Response(serializer.data)
 
 class ImagenVentaLocalView(generics.CreateAPIView):
   model = ImagenVentaLocal
@@ -162,32 +74,59 @@ class ImagenVentaLocalView(generics.CreateAPIView):
     print(filename)
     print(file_url)
     storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
-    serializer.save()
+    serializer.save()   
     
-    
-       
-
-
 class AceptarRechazarAdjudicacion(APIView):
-  """ Vista que permite aceptar o rechazar"""
+  """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
+  
   permission_classes = [permissions.AllowAny]
+  
   def post(self, request):
+
     data = self.request.data
     id = data["id"]
     oferta = Oferta.objects.get(id=id)
     option = data["option"]
     if option=="Accept":
       oferta.accepted = "ACCEPTED"
+      oferta.confirmed= True
     if option == "Reject":  
-      oferta.accepted= "REJECTED"
-    
+      oferta.accepted = "REJECTED"
+      oferta.closed = True
+
     serializer = OfertaSerializer(oferta)
-
     return Response(serializer.data)
-    
-    
 
 
-class EstadoTransporteView(APIView):
+    
+
+class EstadoEnvioGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
-  pass
+  permission_classes = [permissions.AllowAny]
+  def get(self, request):
+    user = self.request.user
+    envios = Envio.objects.all().filter(productor= user.id).exclude(status="PREPARATION")
+    serializers = envioSerializer(envios, many=True)
+
+    return Response(serializers.data)
+class EstadoEnvioProductorView(APIView):
+  """ Metodo que retorna el estado del transporte/envio"""
+  permission_classes = [permissions.AllowAny]
+  def get(self, request):
+    user = self.request.user
+    envios = Envio.objects.all().filter(productor= user.id, status="PREPARATION")
+    serializers = envioSerializer(envios, many=True)
+
+    return Response(serializers.data)
+
+class MarcarEnvio(APIView):
+  permission_classes = [permissions.AllowAny]
+
+  def post(self, request):
+    data = self.request.data
+    user = self.request.user
+
+    envio = Envio.objects.get(id =data["id"])
+    envio.status = "AWAITING CARRIER"
+
+

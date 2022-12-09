@@ -115,38 +115,7 @@ class ComercianteExtranjero(UserAccount):
     
 
     def __str__(self):
-        return str(self.firstName)
-
-    def crearLicitacionInternacional():
-        """
-        por hacer
-        
-        Metodo donde el comerciante Extranjero crear una solicitud de compra en la que pueden participa diferentes productores y transportistas
-        """
-        pass
-
-
-    def verProcesoVenta():
-        """
-
-        Metodo que retorna el estado actual de la licitación(iniciado, recibido, en trasporte, etc)
-        
-        """
-        
-        pass
-    
-    def actualizarProceo():
-
-        """ Metodo que permite al comerciante extranjero editar el proceso, creando avisos o modificando el estado de este mismo """
-
-
-
-
-# @receiver(post_save, sender= UserAccount)
-# def create_profile(sender, instance, created, **kwargs):
-
-#     if created:
-#         if sender.
+        return f"{self.businessName} representado por {self.firstName} {self.lastName}"
 
 class ComercianteLocal(UserAccount):
 
@@ -166,14 +135,6 @@ class ComercianteLocal(UserAccount):
         return super().save(*args , **kwargs)
 
 
-    def actualizarProceso():
-        """ Metodo que permite al comerciante local actualizar el proceso de venta, permitiendole recepcionar el pedido """
-        pass
-
-    def comprarSaldos():
-        """ Metodo que permite al comerciante local comprar saldos( resultantes de una venta internacional donde no se compró todo lo puesto a disposición por el productor ) """
-        pass
-
 class Productor(UserAccount):
     
     documentNumber = models.CharField(max_length=255, blank=True)
@@ -191,26 +152,6 @@ class Productor(UserAccount):
         self.esProductor = True
         self.is_staff = False 
         return super().save(*args , **kwargs)
-
-    def  ingresarInformacionMercancia():
-    
-        """ Metodo que permite a los productores ingresar informacion respecto a la mercancia que poseen   """
-        
-        pass
-
-    def participarProcesoVenta():
-    
-        """ Metodo que permite a los productores ingresar a los procesos de venta creados por los comerciantes extranjeros """
-        
-        pass
-
-    def crearVentaNacional():
-    
-        """ Metodo que permite a los productores crear una publicacion de venta para que los comerciantes locales se contacten o decidan comprar el stock que poseen """
-
-        pass
-
-
 
 
 
@@ -232,15 +173,11 @@ class Transportista(UserAccount):
         self.is_staff = False
         return super().save(*args , **kwargs)
 
-    def  ingresarSubastaVentaInternacional():
-        
-        """ Metodo que permite a los Transportista ingresar a las subastas de transporte de ventas internacionales  """
-
-        pass
 
 class Consultor(UserAccount):
 
-    is_staff = True
+    
+    
 
     def __str__(self):
         return str(self.firstName)
@@ -248,52 +185,32 @@ class Consultor(UserAccount):
     def save(self , *args , **kwargs):
 
         self.type = UserAccount.Types.CONSULTOR
+        self.is_active= True
         self.esConsultor = True
         self.is_staff = True
+        self.has_perm('cuentas.view_consultor')
+        return super().save(*args , **kwargs)
+
+class Administrador(UserAccount):
+
+    
+
+    def __str__(self):
+        return str(self.firstName)
+
+    def save(self , *args , **kwargs):
+
+        self.type = UserAccount.Types.ADMINISTRADOR
+        self.is_staff = True
+        self.is_active = True
+        self.is_admin = True
+        self.es_clienteInterno = True
         return super().save(*args , **kwargs)
 
 
 
 
-    
 
-
-class Mercancia(models.Model):
-
-    title =  models.CharField(max_length=255, blank=True)
-    price = models.IntegerField()
-    image = models.CharField(max_length=255, blank=True)
-    stockDec = models.DecimalField( max_digits=10, decimal_places=2)
-    stockInt = models.IntegerField()
-    productor = models.ForeignKey(Productor, on_delete=models.DO_NOTHING)
-
-class VentaNacional(models.Model):
-
-    description = models.CharField(max_length=255, blank=True)
-    productor = models.ForeignKey(Productor, on_delete=models.DO_NOTHING)
-    mercancia = models.ForeignKey(Mercancia, on_delete = models.DO_NOTHING)
-    geoLocation = models.CharField(max_length=255, blank=True)
-
-class LicitacionInternacional(models.Model):
-    description = models.CharField(max_length=255, blank=True)
-    extranjero = models.ForeignKey(ComercianteExtranjero, on_delete=models.DO_NOTHING)
-    productor = models.ForeignKey(Productor, on_delete=models.DO_NOTHING)
-    mercancia = models.ForeignKey(Mercancia, on_delete=models.DO_NOTHING)
-    geoLocation = models.CharField(max_length=255, blank=True)
-
-
-class SubastaTransporte(models.Model):
-
-    description = models.CharField(max_length=255, blank=True)
-    productor = models.ForeignKey(Productor, on_delete=models.DO_NOTHING)
-    transportista = models.ForeignKey(Transportista, on_delete=models.DO_NOTHING)
-    comprador = models.ForeignKey(ComercianteExtranjero, on_delete=models.DO_NOTHING)
-    
-    def calculoGanador():
-        
-        """ Metodo que determina que transportista ha sido el ganador del contrato por el transporte de la venta internacional """
-
-        pass
 
 class Sistema(models.Model):
 
@@ -350,6 +267,7 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
             lista = []
             lista.append(instance.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):

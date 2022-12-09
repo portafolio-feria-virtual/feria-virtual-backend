@@ -27,12 +27,20 @@ class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
+class ChangeEmailSerializer(serializers.Serializer):
+    model = UserAccount
+
+    """
+    Serializer for email change endpoint.
+    """
+    email = serializers.CharField(required=True)
+
 
 # A serializer class that is used to convert the data into JSON format.
 class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComercianteExtranjero
-        fields=('email', 'password',"firstName","lastName","address","phone","country")
+        fields=('email', 'password',"businessName","firstName","lastName","address","phone","country")
 
     password = serializers.CharField(
         min_length=8, write_only=True)
@@ -65,7 +73,25 @@ class ProductorSignupSerializer(serializers.ModelSerializer):
 class TransportistaSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transportista
-        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","rut","capacity","size","cooling")
+        fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut")
+    password = serializers.CharField(
+        min_length=8, write_only=True)
+
+    def validate_password(self, value):
+        return make_password(value)
+class AdministradorSignupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Administrador
+        fields=('email', 'password',"firstName","lastName")
+    password = serializers.CharField(
+        min_length=8, write_only=True)
+
+    def validate_password(self, value):
+        return make_password(value)
+class ConsultorSignupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Consultor
+        fields=('email', 'password',"firstName","lastName")
     password = serializers.CharField(
         min_length=8, write_only=True)
 

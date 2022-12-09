@@ -39,6 +39,13 @@ class TransportistaSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = TransportistaSignupSerializer
 
+class AdministradorSignupView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = AdministradorSignupSerializer
+class ConsultorSignupView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = ConsultorSignupSerializer
+
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -162,4 +169,26 @@ class ChangePasswordView(generics.UpdateAPIView):
 
             return Response(response)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class ChangeEmailView(generics.UpdateAPIView):
+#     queryset = UserAccount.objects.all()
+#     permission_classes = (permissions.AllowAny,)
+#     serializer_class = ChangeEmailSerializer
+    
+#     def get_object(self, queryset=None):
+#         obj = self.request.user
+#         return obj
+
+#     def update(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         print(f"esto es la instancia: -> {self.object}")
+#         serializer = self.get_serializer(self.object, data=request.data ,partial=True)
+#         if serializer.is_valid():
+#             self.request.user.email = serializer.data.get("new_email")
+#             return Response({"message":"Email updated successfully"})
+        
+#         else:
+#             return Response({"message":"failed"})
+
+
+#     # def update():

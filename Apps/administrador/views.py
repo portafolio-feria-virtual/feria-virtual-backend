@@ -18,6 +18,7 @@ class CrearContratoView(generics.CreateAPIView):
 
 class VerContratosView(APIView):
     permission_classes = (permissions.AllowAny,)
+    #serializer_class = ContratoSerializer
     def get (self, request):
         contratos = Contrato.objects.all()
         serializer = ContratoSerializer(contratos, many=True)
@@ -25,6 +26,7 @@ class VerContratosView(APIView):
 
 class BuscarContratoView(APIView):
     permission_classes = (permissions.AllowAny,)
+    #serializer_class =ContratoSerializer
     def post (self, request,):
         data = self.request.data
         companyName = data['companyName']
@@ -34,6 +36,7 @@ class BuscarContratoView(APIView):
 
 class EditarContratosView(APIView):
     permission_classes = (permissions.AllowAny,)
+    #serializer_class = ContratoSerializer
     def put(self, request):
         data = self.request.data
         contrato = Contrato.objects.get(id = data['id'])
@@ -45,6 +48,7 @@ class EditarContratosView(APIView):
         
 class VerLicitacionView(APIView):
     permission_classes = (permissions.AllowAny, )
+    #serializer_class = LicitacionSerializer
     def get (self, request):
         solicitud = Licitacion.objects.all()
         serializer = LicitacionSerializer(solicitud, many=True)
@@ -52,6 +56,7 @@ class VerLicitacionView(APIView):
         
 class VerOfertaView(APIView):
     permission_classes = (permissions.AllowAny,)
+    #serializer_class = OfertaSerializer
     def get(self, request):
         oferta = Oferta.objects.all()
         serializer = OfertaSerializer(oferta, many=True)
@@ -59,6 +64,7 @@ class VerOfertaView(APIView):
 
 class VerVentaLocalView(APIView):
     permission_classes = (permissions.AllowAny,)
+    #serializer_class = VentaLocalSerializer
     def get(self, request):
         def get(self, request):
             ventaLocal = VentaLocal.objects.all()
