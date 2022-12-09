@@ -8,7 +8,7 @@ urlpatterns = [
     path('verLicitacion/', VerLicitacionView.as_view()),
     path('verOferta/', VerOfertaView.as_view()),
     path('verVentaLocal/', VerVentaLocalView.as_view()),
-    path('editarContrato/', EditarContratosView.as_view()),
+    path('editarContrato/', EditarContratoView.as_view()),
 ]
 
 
