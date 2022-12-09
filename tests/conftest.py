@@ -8,6 +8,7 @@ from Apps.comercianteExtranjero.models import *
 from Apps.transportista.models import *
 
 
+
 @pytest.fixture
 def client():
     return APIClient()
@@ -105,6 +106,7 @@ def userConsultor():
     datos = dict(
         email="wemake@bananas.com",
         password="toomuchbananas"
+
     )
 
     extranjero = ComercianteExtranjero.objects.create(**datos)

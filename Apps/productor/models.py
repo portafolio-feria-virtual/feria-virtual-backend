@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 # Create your models here.
 from django.db import models
-from Apps.cuentas.models import Productor
+from Apps.cuentas.models import Productor, ComercianteExtranjero
 from Apps.comercianteExtranjero.models import Licitacion
 
 # Create your models here.
@@ -27,6 +27,7 @@ class Oferta(models.Model):
     assigned = models.BooleanField(default=False)
     accepted = models.CharField(max_length = 30 , choices = Status.choices , default = Status.STANDBY)
     closed = models.BooleanField(default=False)
+    confirmed =  models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -84,3 +85,5 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
 #         print(instance.image)
 #         default_storage.delete("Diagrama signup.png")
 #         default_storage.delete("Diagrama_signup.png")
+
+
