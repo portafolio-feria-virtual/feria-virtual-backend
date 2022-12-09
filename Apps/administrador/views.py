@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import status, generics, viewsets, permissions
 from rest_framework.response import Response
+from rest_framework.generics import UpdateAPIView
 from .serializers import *
 from .models import *
 from Apps.comercianteExtranjero.models import Licitacion
@@ -32,12 +33,16 @@ class BuscarContratoView(APIView):
         serializer = ContratoSerializer(contratos)
         return Response(serializer.data)
 
-class EditarContratosView(APIView):
+class EditarContratoView(APIView):
+    ##serializer_class = UpdateContratoSerializer
     permission_classes = (permissions.AllowAny,)
-    def put(self, request):
+    def patch(self, request):
         data = self.request.data
-        contrato = Contrato.objects.get(id = data['id'])
-        serializer = ContratoSerializer(contrato, data=request.data)
+        ##print(data['id'])
+        id = data['id']
+        contrato = Contrato.objects.get(id=id)
+        contrato.endDate = data['endDate']
+        serializer = ContratoSerializer(contrato)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

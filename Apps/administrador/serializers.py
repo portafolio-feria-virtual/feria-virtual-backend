@@ -17,6 +17,15 @@ class ContratoSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')
 
-    
-
+class UpdateContratoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contrato
+        ##fields = ('id','type','companyName', 'initDate', 'endDate', 'fileName', 'isActive')
+        fields = ('endDate')
+    def validate(self, data):
+        if( data['endDate'] > self.initDate):
+            
+            return data
+        else:
+            raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')
 
