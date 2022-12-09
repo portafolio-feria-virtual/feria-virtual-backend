@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "django_rest_passwordreset",
+    "drf_spectacular",
 
 
     
@@ -151,12 +152,20 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
     'rest_framework.permissions.IsAuthenticated'],
 
-    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"]
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     
     }
 
 
-
+SPECTACULAR_SETTINGS = {
+        'TITLE': 'FeriaVirtualMaipoGrande API',
+        'DESCRIPTION': 'Documentación de los Endpoints pertenecientes a la aplicación de Feria Virtual Maipo Grande',
+        'VERSION': '1.0.0',
+        'SERVE_INCLUDE_SCHEMA': False,
+                'COMPONENT_SPLIT_REQUEST': True
+        # OTHER SETTINGS
+    }
 
 
 #Configuracion CORS
