@@ -117,28 +117,6 @@ class ComercianteExtranjero(UserAccount):
     def __str__(self):
         return f"{self.businessName} representado por {self.firstName} {self.lastName}"
 
-    def verProcesoVenta():
-        """
-
-        Metodo que retorna el estado actual de la licitación(iniciado, recibido, en trasporte, etc)
-        
-        """
-        
-        pass
-    
-    def actualizarProceo():
-
-        """ Metodo que permite al comerciante extranjero editar el proceso, creando avisos o modificando el estado de este mismo """
-
-
-
-
-# @receiver(post_save, sender= UserAccount)
-# def create_profile(sender, instance, created, **kwargs):
-
-#     if created:
-#         if sender.
-
 class ComercianteLocal(UserAccount):
 
     documentNumber = models.CharField(max_length=255, blank=True)
@@ -157,14 +135,6 @@ class ComercianteLocal(UserAccount):
         return super().save(*args , **kwargs)
 
 
-    def actualizarProceso():
-        """ Metodo que permite al comerciante local actualizar el proceso de venta, permitiendole recepcionar el pedido """
-        pass
-
-    def comprarSaldos():
-        """ Metodo que permite al comerciante local comprar saldos( resultantes de una venta internacional donde no se compró todo lo puesto a disposición por el productor ) """
-        pass
-
 class Productor(UserAccount):
     
     documentNumber = models.CharField(max_length=255, blank=True)
@@ -182,10 +152,6 @@ class Productor(UserAccount):
         self.esProductor = True
         self.is_staff = False 
         return super().save(*args , **kwargs)
-
-
-
-
 
 
 
@@ -224,6 +190,7 @@ class Consultor(UserAccount):
         self.is_staff = True
         self.has_perm('cuentas.view_consultor')
         return super().save(*args , **kwargs)
+
 class Administrador(UserAccount):
 
     
@@ -300,6 +267,7 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
             lista = []
             lista.append(instance.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):

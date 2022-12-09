@@ -44,10 +44,13 @@ class EstadoEnvioGeneralView(APIView):
 
 class cambiarEstadoEnvioView(APIView):
   permission_classes = [permissions.AllowAny]
-  
+  estados = ["PREPARATION","AWAITING_CARRIER","RECEIVED_BY_CARRIER","ON_TRACK","RECEPTIONED"]
   def post(self, request):
     data = self.request.data
     user = self.request.user
 
     envio = Envio.objects.get(id =data["id"])
-    envio.status = data["status"]
+    if envio.status != "RECEPTIONED":
+      indice = self.estados.index(envio.status)
+      envio.status = self.estados[indice+1]
+    
