@@ -40,7 +40,8 @@ class ChangeEmailSerializer(serializers.Serializer):
 class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComercianteExtranjero
-        fields=('email', 'password',"businessName","firstName","lastName","address","phone","country")
+        fields=('email', 'password',"firstName","lastName","businessName","address","phone","country")
+
 
     password = serializers.CharField(
         min_length=8, write_only=True)

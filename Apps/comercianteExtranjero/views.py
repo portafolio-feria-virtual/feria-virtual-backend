@@ -19,8 +19,6 @@ from Apps.productor.serializers import OfertaSerializer
 from Apps.transportista.models import  *
 
 
-
-
 # @user_passes_test(check_type)
 class LicitacionView(UserPassesTestMixin, generics.CreateAPIView):
     def test_func(self):
@@ -93,7 +91,7 @@ class EditCloseDateView(APIView):
 class UpdateLicitacion(UpdateAPIView):
     '''Modificar datos de una licitacion segun id licitacion'''
     permission_classes = (permissions.AllowAny, )
-    
+
 
     queryset = Licitacion.objects.all()
     serializer_class = LicitacionSerializer

@@ -1,6 +1,13 @@
 import pytest
 from rest_framework.test import APIClient
 from Apps.cuentas.models import *
+from Apps.administrador.models import *
+from Apps.productor.models import *
+from Apps.comercianteLocal.models import *
+from Apps.comercianteExtranjero.models import *
+from Apps.transportista.models import *
+
+
 
 @pytest.fixture
 def client():
@@ -98,17 +105,37 @@ def userAdmin():
 def userConsultor():
     datos = dict(
         email="wemake@bananas.com",
-        password="toomuchbananas", 
-        businessName="International Bananas Company",
-        firstName="John", 
-        lastName="Peers",
-        address= "Fifth Avenue, Massachusetts", 
-        phone= "56911111111", 
-        country="United States"
+        password="toomuchbananas"
+
     )
 
     extranjero = ComercianteExtranjero.objects.create(**datos)
 
     return extranjero
 
+@pytest.fixture
+def contrato(userExtranjero):
+    datos = dict(
+        type = "COMERCIANTE EXTRANJERO",
+        companyName = "International Bananas Company",
+        endDate = "2022-12-25",
+        isActive = True,
+        fileName = "JJJJJ"
+    )
+    contrato = Contrato.objects.create(**datos)
 
+    return contrato
+
+@pytest.fixture 
+def ventaLocal(userProductor):
+    datos = dict(
+        status = "PUBLISHED",
+        sold = False,
+        name = "Venta de papas",
+        price = 2500,
+        stock = 1000,
+        location = "Talagante"
+    )
+    ventaLocal = VentaLocal.objects.create(**datos)
+
+    return ventaLocal
