@@ -34,7 +34,7 @@ config = {
   "appId": "1:470955898689:web:9419cfd8e1e9da78d613c0",
   "measurementId": "G-9M85SHKCEV",
   "databaseURL":"gs://bucket-portafolio.appspot.com",
- "serviceAccount":"Apps/productor/bucket-portafolio-firebase-adminsdk-gii80-6c536b1389.json"
+ #"serviceAccount":"Apps/productor/bucket-portafolio-firebase-adminsdk-gii80-6c536b1389.json"
 }
 
 firebase = pyrebase.initialize_app(config)
@@ -80,25 +80,25 @@ class ImagenVentaLocalView(generics.CreateAPIView):
     storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
     serializer.save()   
   
-class RetrieveImagesView(APIView):
-  model = ImagenVentaLocal
-  permission_classes = [permissions.AllowAny]
+# class RetrieveImagesView(APIView):
+#   model = ImagenVentaLocal
+#   permission_classes = [permissions.AllowAny]
 
-  def get(self,request):
-    all_files = storage.child("/files/Caracolas/Venta de caracolas").list_files()
-    print(all_files)
-    archivos = {}
-    for idx, file in enumerate(all_files):
-      try:
-        print(file.name)
+#   def get(self,request):
+#     all_files = storage.child("/files/Caracolas/Venta de caracolas").list_files()
+#     print(all_files)
+#     archivos = {}
+#     for idx, file in enumerate(all_files):
+#       try:
+#         print(file.name)
        
-        z = storage.child(file.name).get_url(None)
-        archivos[idx] = str(z)
-        print(f"imprimiendo {z} ")
+#         z = storage.child(file.name).get_url(None)
+#         archivos[idx] = str(z)
+#         print(f"imprimiendo {z} ")
 
-      except:
-        print("retrieve failed")
-    return Response(archivos)
+#       except:
+#         print("retrieve failed")
+#     return Response(archivos)
 
 class AceptarRechazarAdjudicacion(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
