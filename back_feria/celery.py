@@ -11,7 +11,19 @@ app.conf.timezone = 'America/Santiago'
 app.conf.beat_schedule = {
     "check_contract_date": {
         "task": "Apps.serviciosInternos.tasks.check_contract_date",
-        "schedule": timedelta(seconds=10),
+        "schedule": timedelta(hours=1),
+    },
+    "send_mail_contract_week_before":{
+        "task":"",
+        "schedule": timedelta(hours=1)
+    },
+    "check_postulation_date":{
+        "task":"",
+        "schedule": timedelta(hours=1)
+    },
+    "check_postulation_date":{
+        "task":"",
+        "schedule": timedelta(hours=1)
     },
 }
  

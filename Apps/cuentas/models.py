@@ -101,8 +101,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         return super().save(*args , **kwargs)
 
 class ComercianteExtranjero(UserAccount):
-    #user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    businessName = models.CharField( max_length=50)
+    
+    businessName = models.CharField( max_length=50, unique=True)
     country = models.CharField(max_length=255)
 
 
@@ -120,7 +120,7 @@ class ComercianteExtranjero(UserAccount):
 class ComercianteLocal(UserAccount):
 
     documentNumber = models.CharField(max_length=255, blank=True)
-    businessName = models.CharField( max_length=50)
+    businessName = models.CharField( max_length=50, unique=True)
     rut = models.CharField(max_length=255, blank=True)
     
 
@@ -138,7 +138,7 @@ class ComercianteLocal(UserAccount):
 class Productor(UserAccount):
     
     documentNumber = models.CharField(max_length=255, blank=True)
-    businessName = models.CharField( max_length=50)
+    businessName = models.CharField( max_length=50, unique=True)
     rut = models.CharField(max_length=255, blank=True)
     productType = models.CharField(max_length=255, blank=True)
     #mercancia = models.ForeignKey("app.Model", on_delete=models.CASCADE)
@@ -156,7 +156,7 @@ class Productor(UserAccount):
 
 
 class Transportista(UserAccount):
-    businessName = models.CharField( max_length=50)
+    businessName = models.CharField( max_length=50, unique=True)
     documentNumber = models.CharField(max_length=255, blank=True)
     rut = models.CharField(max_length=255, blank=True)
     
@@ -207,54 +207,6 @@ class Administrador(UserAccount):
         self.es_clienteInterno = True
         return super().save(*args , **kwargs)
 
-
-
-
-
-
-class Sistema(models.Model):
-
-    usuario = models.ForeignKey(UserAccount, on_delete=models.DO_NOTHING)
-
-    def actualizarEstadoProcesoLicitacionVenta():
-        """ Metodo para actualizar estado proceso de la venta internacional """
-
-        pass
-
-    def enviarReporteResumenVentaEmail():
-        """ Metodo para enviar reporte de resumen de la venta internacional al correo de los involucrados """
-        
-        pass
-
-    def crearSubastaTransporte():
-        """ Metodo para crear subasta de transporte """
-
-        pass
-
-    def adjudicarSubasta():
-        """ Metodo para adjudicar subasta """
-
-        pass
-
-    def determinarCantidadProductoresMercancia():
-        """ Metodo para determinar cantidad productores de mercancia que abasteceran una venta"""
-
-        pass
-
-    def evaluarRendimiento():
-        """ Metodo para evaluar rendimiento """
-
-        pass
-    
-    def evaluarPerdidaFruta():
-        """ Metodo para evaluar perdida de fruta """
-
-        pass
-
-    def crearReporteRol():
-        """ Metodo para crear reporte por rol """
-
-        pass
 
 @receiver(post_save)
 def afterCreateMail(sender, instance=None, created= False, **kwargs):

@@ -170,25 +170,39 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
 
-# class ChangeEmailView(generics.UpdateAPIView):
-#     queryset = UserAccount.objects.all()
-#     permission_classes = (permissions.AllowAny,)
-#     serializer_class = ChangeEmailSerializer
-    
-#     def get_object(self, queryset=None):
-#         obj = self.request.user
-#         return obj
 
-#     def update(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         print(f"esto es la instancia: -> {self.object}")
-#         serializer = self.get_serializer(self.object, data=request.data ,partial=True)
-#         if serializer.is_valid():
-#             self.request.user.email = serializer.data.get("new_email")
-#             return Response({"message":"Email updated successfully"})
-        
-#         else:
-#             return Response({"message":"failed"})
+class UpdateEmailView(generics.UpdateAPIView):
 
+    queryset = UserAccount.objects.all()
+    permission_classes = (IsAuthenticated,)
+   
+    def get_serializer_class(self):
+        user = self.request.user
+        if user.type == "PRODUCTOR":
+            return UpdateEmailProductorSerializer
+        if user.type == "COMERCIANTE EXTRANJERO":
+            return UpdateEmailExtranjeroSerializer
+        if user.type == "COMERCIANTE LOCAL":
+            return UpdateEmailLocalSerializer
+        if user.type == "TRANSPORTISTA":
+            return UpdateEmailTransportistaSerializer
+        else:
+            pass
 
-#     # def update():
+    def get_object(self):
+        user = self.request.user
+        data = self.request.data
+        if user.type == "PRODUCTOR":
+            productor = Productor.objects.get(id= user.id)
+            return productor
+        if user.type == "COMERCIANTE EXTRANJERO":
+            extranjero = ComercianteExtranjero.objects.get(id= user.id)
+            return extranjero
+        if user.type == "COMERCIANTE LOCAL":
+            cLocal = ComercianteLocal.objects.get(id= user.id)
+            return cLocal
+        if user.type == "TRANSPORTISTA":
+            transportista = Transportista.objects.get(id= user.id)
+            return transportista
+        else:
+            pass

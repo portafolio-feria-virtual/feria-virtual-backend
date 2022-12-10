@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
 from django.conf import settings
+import urllib.parse
+import json
 
 from Apps.transportista.models import *
 from rest_framework.parsers import FileUploadParser, MultiPartParser,FormParser
@@ -31,12 +33,14 @@ config = {
   "messagingSenderId": "470955898689",
   "appId": "1:470955898689:web:9419cfd8e1e9da78d613c0",
   "measurementId": "G-9M85SHKCEV",
-  "databaseURL":"gs://bucket-portafolio.appspot.com"
+  "databaseURL":"gs://bucket-portafolio.appspot.com",
+ "serviceAccount":"Apps/productor/bucket-portafolio-firebase-adminsdk-gii80-6c536b1389.json"
 }
 
 firebase = pyrebase.initialize_app(config)
 storage = firebase.storage()
 storage.child()
+
 # Create your views here.
 class OfertaView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
@@ -75,7 +79,27 @@ class ImagenVentaLocalView(generics.CreateAPIView):
     print(file_url)
     storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
     serializer.save()   
-    
+  
+class RetrieveImagesView(APIView):
+  model = ImagenVentaLocal
+  permission_classes = [permissions.AllowAny]
+
+  def get(self,request):
+    all_files = storage.child("/files/Caracolas/Venta de caracolas").list_files()
+    print(all_files)
+    archivos = {}
+    for idx, file in enumerate(all_files):
+      try:
+        print(file.name)
+       
+        z = storage.child(file.name).get_url(None)
+        archivos[idx] = str(z)
+        print(f"imprimiendo {z} ")
+
+      except:
+        print("retrieve failed")
+    return Response(archivos)
+
 class AceptarRechazarAdjudicacion(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
   

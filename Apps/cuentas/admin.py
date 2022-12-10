@@ -42,7 +42,7 @@ admin.site.register(Consultor)
 # admin.site.register(VentaNacional)
 # admin.site.register(LicitacionInternacional)
 #admin.site.register(SubastaTransporte)
-admin.site.register(Sistema)
+#admin.site.register(Sistema)
 
 
 

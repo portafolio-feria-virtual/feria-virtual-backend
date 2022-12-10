@@ -19,7 +19,7 @@ class Contrato(models.Model):
     modifyDate = models.DateField(auto_now=True)
     endDate = models.DateField(blank=True, null=True)
     isActive = models.BooleanField(default=True)
-    fileName = models.CharField(max_length=255, blank=True)
+    fileName = models.FileField(blank=True, null=True)
     
 
 @receiver(pre_save, sender=Contrato)
@@ -37,13 +37,7 @@ def checkType(sender, instance=None, **kwargs):
         cLocal.is_active = True
         cLocal.save()
     if instance.type == "TRANSPORTISTA":
-        extranjero = Transportista.objects.get(businessName=instance.companyName)
-        extranjero.is_active = True
-        extranjero.save()
-            # print(instance.email)
-
-            # subject = f"Bienvenido {instance.firstName} {instance.lastName} a Maipo Grande"
-            # message = f"Estimado {instance.firstName} {instance.lastName}:\nEn Maipo Grande estamos muy contentos de contar con tu apoyo.\nEn las proximas horas uno de nuestros ejecutivos se contactará contigo "
-            # lista = []
-            # lista.append(instance.email)
-            # send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+        transportista = Transportista.objects.get(businessName=instance.companyName)
+        transportista.is_active = True
+        transportista.save()
+            

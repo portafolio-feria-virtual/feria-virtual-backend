@@ -18,7 +18,7 @@ urlpatterns = [
     path('auth/ping/', ping),
     path('auth/delete/', DeleteAccountView.as_view()),
     path('auth/changePassword/', ChangePasswordView.as_view(), name='change-password'),
-   # path('auth/changeEmail/', ChangeEmailView.as_view(), name='change-email'),
+   path('auth/changeEmail/', UpdateEmailView.as_view(), name='change-email'),
     path('auth/passwordReset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
 
