@@ -100,7 +100,7 @@ class ImagenVentaLocalView(generics.CreateAPIView):
 #         print("retrieve failed")
 #     return Response(archivos)
 
-class AceptarRechazarAdjudicacion(APIView):
+class AceptarRechazarAdjudicacionView(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
   
   permission_classes = [permissions.AllowAny]

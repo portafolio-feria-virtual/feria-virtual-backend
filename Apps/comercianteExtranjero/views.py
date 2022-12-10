@@ -171,23 +171,6 @@ class SeeAllLicitacionWithOfferView(APIView):
         return Response(serializador.data)
 
 
-class AsignarRechazarOfertaLicitacion(APIView):
-  """ Vista que permite asignar o rechazar la oferta que ha recibido una licitación """
-  permission_classes = [permissions.AllowAny]
-  def post(self, request):
-    data = self.request.data
-    id = data["id"]
-    oferta = Oferta.objects.get(id=id)
-    option = data["option"]
-    if option=="Accept":
-      oferta.assigned = True
-      oferta.accepted = "ACCEPTED"
-    if option == "Reject":  
-      oferta.assigned= False
-      oferta.accepted = "REJECTED"
-      oferta.closed= True
-
-
 
     
 

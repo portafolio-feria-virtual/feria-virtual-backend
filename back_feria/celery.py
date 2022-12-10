@@ -14,15 +14,15 @@ app.conf.beat_schedule = {
         "schedule": timedelta(hours=1),
     },
     "send_mail_contract_week_before":{
-        "task":"",
+        "task":"Apps.serviciosInternos.tasks.send_email_contract_week_before",
         "schedule": timedelta(hours=1)
     },
     "check_postulation_date":{
-        "task":"",
+        "task":"Apps.serviciosInternos.tasks.check_postulation_date",
         "schedule": timedelta(hours=1)
     },
-    "check_postulation_date":{
-        "task":"",
+    "send_email_postulation_week_before":{
+        "task":"Apps.serviciosInternos.tasks.send_email_postulation_week_before",
         "schedule": timedelta(hours=1)
     },
 }

@@ -9,11 +9,13 @@ urlpatterns = [
      path('createOffer/', OfertaView.as_view()),
      path('createSale/', VentaLocalCreateView.as_view()),
      path('uploadImage/', ImagenVentaLocalView.as_view()),
-     path("seeAll/",SeeAllOfferView.as_view()),
-     path("retrieveImages/", RetrieveImagesView.as_view()),
+     path("seeAllOffer/",SeeAllOfferView.as_view()),
+     path("acceptBid/", AceptarRechazarAdjudicacionView.as_view()),
+     path("packageTrackingGeneral/",EstadoEnvioGeneralView.as_view()),
+     path("packageTrackingProducer/", EstadoEnvioProductorView.as_view()),
+     path("confirmPreparation/",MarcarEnvio.as_view())
+     #path("retrieveImages/", RetrieveImagesView.as_view()),
 
-    # path("seeAllOfferPostulacionUser/",SeeAllOfertaWithPostulacionTransporteView.as_view()),
-    # path('', include(router.urls)),
-    #path('createSale/', VentaLocalViewSet.as_view()),
+   
 
 ]
