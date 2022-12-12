@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .serializers import *
-from Apps.productor.serializers import OfertaSerializer
-from Apps.productor.models import Oferta
-from Apps.transportista.serializers import addPostulacionLicitacionSerializer,envioSerializer
-from Apps.transportista.models import PostulacionLicitacionTransporte,Envio
+from Apps.productor.serializers import OfferSerializer
+from Apps.productor.models import Offer
+from Apps.transportista.serializers import addTransportPostulationSerializer,ShippingSerializer
+from Apps.transportista.models import TransportPostulation, Shipping
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.decorators import user_passes_test
@@ -14,94 +14,97 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle
 from datetime import datetime
-from Apps.productor.models import Oferta
-from Apps.productor.serializers import OfertaSerializer
+from Apps.productor.models import Offer
+from Apps.productor.serializers import OfferSerializer
 from Apps.transportista.models import  *
 
 
-# def check_type(user):
-#     
-user.type == "transportista"
-
-
 # @user_passes_test(check_type)
-class LicitacionView(UserPassesTestMixin, generics.CreateAPIView):
+class BidView(UserPassesTestMixin, generics.CreateAPIView):
     def test_func(self):
         print(self.request.user.type)
-        return self.request.user.type == "COMERCIANTE EXTRANJERO"
+        return self.request.user.type == "INTERNATIONAL TRADER"
 
 
     permission_classes = (permissions.IsAuthenticated, )
-    serializer_class = LicitacionSerializer
+    serializer_class = BidSerializer
 
-class AddLicitacionView(generics.CreateAPIView):
+class AddBidView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = LicitacionSerializer
+    serializer_class = BidSerializer
 
-class SearchLicitacionView(APIView):
-    ''' Obtener una licitacion segun id de la licitacion '''
+class SearchBidView(APIView):
+    ''' Obtener una Bid segun id de la Bid '''
     permission_classes = (permissions.AllowAny, )
-    #serializer_class = LicitacionSerializer
+    #serializer_class = BidSerializer
     def post(self,request):
         data = self.request.data
         id = data["id"]
-        licitacion = Licitacion.objects.get(id= id)
-        serializers = LicitacionSerializer(licitacion)
+        bid = Bid.objects.get(id= id)
+        serializers = BidSerializer(bid)
         return Response(serializers.data)
 
-class ListLicitacionView(APIView):
-    '''Obtiene un lista licitaciones segun el id del extranjero tenga licitaciones '''
+class ListBidView(APIView):
+    '''Obtiene un lista Bides segun el id del extranjero tenga Bides '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request,extranjero):
-        licitaciones = Licitacion.objects.filter(extranjero= extranjero)
-        serializer = LicitacionWithOfertaSerializer(licitaciones, many=True)
+    def get(self,request):
+        data = self.request.data
+        internationalTrader = data["internatialTrader"]   
+        bids = Bid.objects.filter(internationalTrader= internationalTrader)
+        serializer = BidWithOffersSerializer(bids, many=True)
         return Response(serializer.data)
 
-class ListOfertaProductorView(APIView):
-    ''' Obtener lista ofertas segun id licitacion en la oferta '''
+class ListOffersProductorView(APIView):
+    ''' Obtener lista ofertas segun id Bid en la oferta '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request,licitacion):
-        ofertas = Oferta.objects.filter(licitacion=licitacion)
-        serializers = OfertaSerializer(ofertas,many=True)
+    def get(self,request):
+        data = self.request.data
+        bid = data["bid"]   
+        offers = Offer.objects.filter(Bid=bid)
+        serializers = OfferSerializer(offers,many=True)
         return Response(serializers.data)
 
-class ListPostulacionTransportistaView(APIView):
-    ''' Obtener lista ofertas segun id licitacion en la postulacion transportista '''
+class ListCarriersPostulationView(APIView):
+    ''' Obtener lista ofertas segun id Bid en la postulacion transportista '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request,licitacion):
-        postulaciones = PostulacionLicitacionTransporte.objects.filter(licitacion=licitacion)
-        serializers = addPostulacionLicitacionSerializer(postulaciones,many=True)
+    def get(self,request):
+        data = self.request.data
+        bid = data["bid"]
+        postulations = TransportPostulation.objects.filter(Bid=bid)
+        serializers = addTransportPostulationSerializer(postulations,many=True)
         return Response(serializers.data)
 
 class EditCloseDateView(APIView):
-    ''' Obtener lista licitacion segun id licitacion '''
+    ''' Obtener lista Bid segun id Bid '''
     permission_classes = (permissions.AllowAny, )
     def post(self,request):
         data = self.request.data
         id = data["id"]
         closeDate = datetime.strptime(data["closeDate"],'%d/%m/%Y').date()
         nowDate = datetime.now().date()
-        licitacion = Licitacion.objects.filter(id= id).first()
-        hayOferta = Oferta.objects.filter(licitacion=id).count()
-        if(hayOferta == 0):           
+        bid = Bid.objects.filter(id= id).first()
+        hasOffer = Offer.objects.filter(bid=id).count()
+        if(hasOffer == 0):           
             if nowDate < closeDate:
-                licitacion.closeDate = closeDate
-                licitacion.save()
-                return Response({"message": "fecha licitacion modificada"})
+                bid.closeDate = closeDate
+                bid.save()
+                return Response({"message": "Bid Date modified."})
             else:
-                return Response({"message": "La fecha cierre debe ser mayor que fecha de hoy"})
+                return Response({"message": "Close date must be after current date."})
         else:
-            return Response({"message": "La fecha de cierre no puede extenderse hay ofertas existente en la licitacion"})
+            return Response({"message": "Can't extend close date, Bid has offers related."})
 
-class UpdateLicitacion(UpdateAPIView):
-    '''Modificar datos de una licitacion segun id licitacion'''
+class UpdateBid(UpdateAPIView):
+    '''Modificar datos de una Bid segun id Bid'''
     permission_classes = (permissions.AllowAny, )
-    throttle_classes = [
-    Throttle]
 
-    queryset = Licitacion.objects.all()
-    serializer_class = LicitacionSerializer
-    lookup_field = 'pk'
+
+    queryset = Bid.objects.all()
+    serializer_class = ListBidSerializer
+
+    def get_object(self):
+        data = self.request.data
+        return Bid.objects.filter(id = data["id"]).first()
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -109,92 +112,74 @@ class UpdateLicitacion(UpdateAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Licitacion modificada"})
+            return Response({"message": "Bid modified"})
 
         else:
             return Response({"message": "failed", "details": serializer.errors})
             
-class AceptarRechazarOfertaProductorView(APIView):
-    ''' Obtener lista licitacion segun id licitacion '''
+class AcceptDeclineOfferProducerView(APIView):
+    ''' Accept an offer made by the producer, searching the offer by id an marking it as assigned= True '''
     permission_classes = (permissions.AllowAny, )
     def post(self,request):
         data = self.request.data
         id = data["id"]
-        estado = data["status"]
-        oferta = Oferta.objects.get(id= id)
-        if estado == "Accepted":
-            oferta.assigned = True
-            oferta.accepted = estado
-            oferta.save()
-            return Response({"message": "Oferta Aceptada"})
-        elif estado == "Rejected":
-            oferta.assigned = False
-            oferta.accepted = estado
-            oferta.save()
-            return Response({"message": "Oferta Rechazada"})
+        status = data["status"]
+        offer = Offer.objects.get(id= id)
+        if status == "Accepted":
+            offer.assigned = True
+            offer.status = status
+            offer.save()
+            return Response({"message": "Offer accepted"})
+        elif status == "Rejected":
+            offer.assigned = False
+            offer.status = status
+            offer.save()
+            return Response({"message": "Offer rejected"})
         else:
-           return Response({"message": "Accion de oferta no realizada"})
+           return Response({"message": "Offer action not resolved"})
 
-class AceptarRechazarPostulacionTrasporteView(APIView):
-    ''' Obtener lista licitacion segun id licitacion '''
+class AcceptDeclineTransportPostulationView(APIView):
+    ''' Obtener lista Bid segun id Bid '''
     permission_classes = (permissions.AllowAny, )
     def post(self,request):
         data = self.request.data
         id = data["id"]
-        estado = data["status"]
-        postulacion = PostulacionLicitacionTransporte.objects.get(id= id)
-        if estado == "Accepted":
-            postulacion.assigned = True
-            postulacion.accepted = estado
-            postulacion.save()
-            return Response({"message": "Postulacion de transporte aceptada"})
-        elif estado == "Rejected":
-            postulacion.assigned = False
-            postulacion.accepted = estado
-            postulacion.save()
-            return Response({"message": "Postulacion de transporte rechazada"})
+        status = data["status"]
+        postulation = TransportPostulation.objects.get(id= id)
+        if status == "Accepted":
+            postulation.assigned = True
+            postulation.accepted = status
+            postulation.save()
+            return Response({"message": "Transport postulation accepted"})
+        elif status == "Rejected":
+            postulation.assigned = False
+            postulation.accepted = status
+            postulation.save()
+            return Response({"message": "Transport Postulation rejected"})
         else:
-           return Response({"message": "Acccion de Postulacion de transporte no realizada"})
+           return Response({"message": "Action not perfomed, petition cannot be resolved"})
 
-class EstadoEnvioLicitacionView(APIView):
-    ''' Obtener un Envio segun id de la licitacion '''
+class ShippingStatusBidView(APIView):
+    ''' Obtener un Envio segun id de la Bid '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request,licitacion):
-        envioLicitacion = Envio.objects.filter(licitacion=licitacion).first()
-        serializers = envioSerializer(envioLicitacion)
+    def get(self,request):
+        data = self.request.data
+        bid = data["bid"]
+        shippingBid = Shipping.objects.filter(bid=bid).first()
+        serializers = ShippingSerializer(shippingBid)
         return Response(serializers.data)
 
 
 
 
-class SeeAllLicitacionWithOfferView(APIView):
+class SeeAllBidWithOfferView(APIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = LicitacionWithOfertaSerializer
+    serializer_class = BidWithOffersSerializer
 
     def get(self, request):
-        licitacion = Licitacion.objects.all().filter(extranjero= self.request.user.id)
-        serializador = self.serializer_class(licitacion, many=True)
-        return Response(serializador.data)
-
-
-class AsignarRechazarOfertaLicitacion(APIView):
-  """ Vista que permite asignar o rechazar la oferta que ha recibido una licitación """
-  permission_classes = [permissions.AllowAny]
-  def post(self, request):
-    data = self.request.data
-    id = data["id"]
-    oferta = Oferta.objects.get(id=id)
-    option = data["option"]
-    if option=="Accept":
-      oferta.assigned = True
-      oferta.accepted = "ACCEPTED"
-    if option == "Reject":  
-      oferta.assigned= False
-      oferta.accepted = "REJECTED"
-      oferta.closed= True
-
-    
-
+        Bid = Bid.objects.all().filter(extranjero= self.request.user.id)
+        serializer = self.serializer_class(Bid, many=True)
+        return Response(serializer.data)
 
 
 

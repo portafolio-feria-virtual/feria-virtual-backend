@@ -20,31 +20,31 @@ from rest_framework.permissions import IsAuthenticated
 
 
 #@method_decorator(csrf_protect, name='dispatch')
-class ExtranjeroSignupView(generics.CreateAPIView):
+class InternationalSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ComercianteExtranjeroSignupSerializer
+    serializer_class = InternationalTraderSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
 class LocalSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ComercianteLocalSignupSerializer
+    serializer_class = LocalTraderSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
-class ProductorSignupView(generics.CreateAPIView):
+class ProducerSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ProductorSignupSerializer
+    serializer_class = ProducerSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
-class TransportistaSignupView(generics.CreateAPIView):
+class CarrierSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = TransportistaSignupSerializer
+    serializer_class = CarrierSignupSerializer
 
-class AdministradorSignupView(generics.CreateAPIView):
+class AdministratorSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = AdministradorSignupSerializer
-class ConsultorSignupView(generics.CreateAPIView):
+    serializer_class = AdministratorSignupSerializer
+class ConsultantSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ConsultorSignupSerializer
+    serializer_class = ConsultantSignupSerializer
 
 
 
@@ -170,25 +170,39 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
 
-# class ChangeEmailView(generics.UpdateAPIView):
-#     queryset = UserAccount.objects.all()
-#     permission_classes = (permissions.AllowAny,)
-#     serializer_class = ChangeEmailSerializer
-    
-#     def get_object(self, queryset=None):
-#         obj = self.request.user
-#         return obj
 
-#     def update(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         print(f"esto es la instancia: -> {self.object}")
-#         serializer = self.get_serializer(self.object, data=request.data ,partial=True)
-#         if serializer.is_valid():
-#             self.request.user.email = serializer.data.get("new_email")
-#             return Response({"message":"Email updated successfully"})
-        
-#         else:
-#             return Response({"message":"failed"})
+class UpdateEmailView(generics.UpdateAPIView):
 
+    queryset = UserAccount.objects.all()
+    permission_classes = (IsAuthenticated,)
+   
+    def get_serializer_class(self):
+        user = self.request.user
+        if user.type == "PRODUCER":
+            return UpdateEmailProducerSerializer
+        if user.type == "INTERNATIONAL TRADER":
+            return UpdateEmailExtranjeroSerializer
+        if user.type == "LOCAL TRADER":
+            return UpdateEmailLocalSerializer
+        if user.type == "CARRIER":
+            return UpdateEmailCarrierSerializer
+        else:
+            pass
 
-#     # def update():
+    def get_object(self):
+        user = self.request.user
+        data = self.request.data
+        if user.type == "PRODUCER":
+            productor = Producer.objects.get(id= user.id)
+            return productor
+        if user.type == "INTERNATIONAL TRADER":
+            extranjero = InternationalTrader.objects.get(id= user.id)
+            return extranjero
+        if user.type == "LOCAL TRADER":
+            cLocal = LocalTrader.objects.get(id= user.id)
+            return cLocal
+        if user.type =="CARRIER":
+            carrier = Carrier.objects.get(id= user.id)
+            return carrier
+        else:
+            pass

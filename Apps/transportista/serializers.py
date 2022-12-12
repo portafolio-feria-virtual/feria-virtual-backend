@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from .models import *
-class addPostulacionLicitacionSerializer (serializers.ModelSerializer):
+class addTransportPostulationSerializer (serializers.ModelSerializer):
     class Meta:
-        model = PostulacionLicitacionTransporte
+        model = TransportPostulation
         fields = ("__all__")
 
 
-class envioSerializer (serializers.ModelSerializer):
+class ShippingSerializer (serializers.ModelSerializer):
 
     class Meta:
-        model = Envio
+        model =Shipping 
         fields = ("__all__")

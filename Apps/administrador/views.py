@@ -5,38 +5,38 @@ from rest_framework.response import Response
 from rest_framework.generics import UpdateAPIView
 from .serializers import *
 from .models import *
-from Apps.comercianteExtranjero.models import Licitacion
-from Apps.comercianteExtranjero.serializers import LicitacionSerializer
-from Apps.productor.models import Oferta
-from Apps.productor.serializers import OfertaSerializer
-from Apps.productor.models import VentaLocal
-from Apps.productor.serializers import VentaLocalSerializer
+from Apps.comercianteExtranjero.models import Bid
+from Apps.comercianteExtranjero.serializers import BidSerializer
+from Apps.productor.models import Offer
+from Apps.productor.serializers import OfferSerializer
+from Apps.productor.models import LocalSale
+from Apps.productor.serializers import LocalSaleSerializer
 
 # Create your views here.
-class CrearContratoView(generics.CreateAPIView):
+class CreateContractView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = ContratoSerializer
+    serializer_class = ContractSerializer
 
-class VerContratosView(APIView):
+class SeeAllContractsView(APIView):
     permission_classes = (permissions.AllowAny,)
-    #serializer_class = ContratoSerializer
+    #serializer_class = ContractSerializer
     def get (self, request):
-        contratos = Contrato.objects.all()
-        serializer = ContratoSerializer(contratos, many=True)
+        Contracts = Contract.objects.all()
+        serializer = ContractSerializer(Contracts, many=True)
         return Response(serializer.data)
 
-class BuscarContratoView(APIView):
+class SearchContractView(APIView):
     permission_classes = (permissions.AllowAny,)
-    #serializer_class =ContratoSerializer
+    #serializer_class =ContractSerializer
     def post (self, request,):
         data = self.request.data
         companyName = data['companyName']
-        contratos = Contrato.objects.get(companyName=companyName)
-        serializer = ContratoSerializer(contratos)
+        Contracts = Contract.objects.get(companyName=companyName)
+        serializer = ContractSerializer(Contracts)
         return Response(serializer.data)
 
-class EditarContratoView(APIView):
-    ##serializer_class = UpdateContratoSerializer
+class EditContractView(APIView):
+    ##serializer_class = UpdateContractSerializer
     permission_classes = (permissions.AllowAny,)
 
     def patch(self, request):
@@ -44,37 +44,37 @@ class EditarContratoView(APIView):
         data = self.request.data
         ##print(data['id'])
         id = data['id']
-        contrato = Contrato.objects.get(id=id)
-        contrato.endDate = data['endDate']
-        serializer = ContratoSerializer(contrato)
+        Contract = Contract.objects.get(id=id)
+        Contract.endDate = data['endDate']
+        serializer = ContractSerializer(Contract)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-class VerLicitacionView(APIView):
+class SeeAllBidsView(APIView):
     permission_classes = (permissions.AllowAny, )
-    #serializer_class = LicitacionSerializer
+    #serializer_class = BidSerializer
     def get (self, request):
-        solicitud = Licitacion.objects.all()
-        serializer = LicitacionSerializer(solicitud, many=True)
+        bid = Bid.objects.all()
+        serializer = BidSerializer(bid, many=True)
         return Response(serializer.data)
         
-class VerOfertaView(APIView):
+class SeeAllOffersView(APIView):
     permission_classes = (permissions.AllowAny,)
     #serializer_class = OfertaSerializer
     def get(self, request):
-        oferta = Oferta.objects.all()
-        serializer = OfertaSerializer(oferta, many=True)
+        offer = Offer.objects.all()
+        serializer = OfferSerializer(offer, many=True)
         return Response(serializer.data)
 
-class VerVentaLocalView(APIView):
+class SeeAllLocalSalesView(APIView):
     permission_classes = (permissions.AllowAny,)
     #serializer_class = VentaLocalSerializer
     def get(self, request):
         def get(self, request):
-            ventaLocal = VentaLocal.objects.all()
-            serializer = VentaLocalSerializer(ventaLocal, many=True)
+            localSale = LocalSale.objects.all()
+            serializer = LocalSaleSerializer(localSale, many=True)
             return Response(serializer.data)
 
 

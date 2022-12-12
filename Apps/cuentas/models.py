@@ -40,19 +40,19 @@ class UserAccountManager(BaseUserManager):
       
 class UserAccount(AbstractBaseUser, PermissionsMixin):
     class Types(models.TextChoices):
-        COMERCIANTE_LOCAL = "COMERCIANTE LOCAL" , "comerciante local"
-        COMERCIANTE_EXTRANJERO = "COMERCIANTE EXTRANJERO" , "comerciante extranjero"
-        CONSULTOR = "CONSULTOR","consultor"
-        PRODUCTOR = "PRODUCTOR", "productor"
-        TRANSPORTISTA = "TRANSPORTISTA","transportista"
-        ADMINISTRADOR = "ADMINISTRADOR", "administrador"
+        LOCAL_TRADER = "LOCAL TRADER" , "local trader"
+        INTERNATIONAL_TRADER = "INTERNATIONAL TRADER" , "INTERNATIONAL TRADER"
+        CONSULTANT = "CONSULTANR","consultant"
+        PRODUCER = "PRODUCER", "producer"
+        CARRIER = "CARRIER","carrier"
+        ADMINISTRATOR = "ADMINISTRATOR", "administrator"
 
 
         
           
     type = models.CharField(max_length = 30 , choices = Types.choices , 
                             # Default is user is teacher
-                            default = Types.COMERCIANTE_LOCAL)
+                            default = Types.LOCAL_TRADER)
     email = models.EmailField(max_length = 200 , unique = True)
 
     """
@@ -67,14 +67,17 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
 
      
-      
-    esClienteInterno = models.BooleanField(default = False)
+    #####
+    ##### Las siguientes variables no se utilizaron nunca, así que las comenté -dotMamu
+    #####
 
-    esComercianteExtranjero = models.BooleanField(default = False)
-    esComercianteLocal = models.BooleanField(default = False)
-    esConsultor = models.BooleanField(default = False)
-    esProductor = models.BooleanField(default = False)
-    esTransportista = models.BooleanField(default = False)
+    # esClienteInterno = models.BooleanField(default = False)
+
+    # esComercianteExtranjero = models.BooleanField(default = False)
+    # esComercianteLocal = models.BooleanField(default = False)
+    # esConsultor = models.BooleanField(default = False)
+    # esProductor = models.BooleanField(default = False)
+    # esTransportista = models.BooleanField(default = False)
 
     firstName = models.CharField(max_length= 100)
     lastName = models.CharField(max_length= 100)
@@ -100,27 +103,26 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
             self.type = UserAccount.Types.EXTERNO
         return super().save(*args , **kwargs)
 
-class ComercianteExtranjero(UserAccount):
-    #user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    businessName = models.CharField( max_length=50)
+class InternationalTrader(UserAccount):
+    
+    businessName = models.CharField( max_length=50, unique=True)
     country = models.CharField(max_length=255)
 
 
     def save(self , *args , **kwargs):
         
-        self.type = UserAccount.Types.COMERCIANTE_EXTRANJERO
-        self.esComercianteExtranjero = True
+        self.type = UserAccount.Types.INTERNATIONAL_TRADER
         self.is_staff = False
         return super().save(*args , **kwargs)
     
 
     def __str__(self):
-        return f"{self.businessName} representado por {self.firstName} {self.lastName}"
+        return f"{self.businessName} represented by {self.firstName} {self.lastName}"
 
-class ComercianteLocal(UserAccount):
+class LocalTrader(UserAccount):
 
     documentNumber = models.CharField(max_length=255, blank=True)
-    businessName = models.CharField( max_length=50)
+    businessName = models.CharField( max_length=50, unique=True)
     rut = models.CharField(max_length=255, blank=True)
     
 
@@ -129,34 +131,31 @@ class ComercianteLocal(UserAccount):
 
     def save(self , *args , **kwargs):
 
-        self.type = UserAccount.Types.COMERCIANTE_LOCAL
-        self.esComercianteLocal = True
+        self.type = UserAccount.Types.LOCAL_TRADER
         self.is_staff = False
         return super().save(*args , **kwargs)
 
 
-class Productor(UserAccount):
+class Producer(UserAccount):
     
     documentNumber = models.CharField(max_length=255, blank=True)
-    businessName = models.CharField( max_length=50)
+    businessName = models.CharField( max_length=50, unique=True)
     rut = models.CharField(max_length=255, blank=True)
     productType = models.CharField(max_length=255, blank=True)
-    #mercancia = models.ForeignKey("app.Model", on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.firstName)
 
     def save(self , *args , **kwargs):
 
-        self.type = UserAccount.Types.PRODUCTOR
-        self.esProductor = True
+        self.type = UserAccount.Types.PRODUCER
         self.is_staff = False 
         return super().save(*args , **kwargs)
 
 
 
-class Transportista(UserAccount):
-    businessName = models.CharField( max_length=50)
+class Carrier(UserAccount):
+    businessName = models.CharField( max_length=50, unique=True)
     documentNumber = models.CharField(max_length=255, blank=True)
     rut = models.CharField(max_length=255, blank=True)
     
@@ -168,13 +167,12 @@ class Transportista(UserAccount):
 
     def save(self , *args , **kwargs):
 
-        self.type = UserAccount.Types.TRANSPORTISTA
-        self.esTransportista = True
+        self.type = UserAccount.Types.CARRIER
         self.is_staff = False
         return super().save(*args , **kwargs)
 
 
-class Consultor(UserAccount):
+class Consultant(UserAccount):
 
     
     
@@ -184,14 +182,13 @@ class Consultor(UserAccount):
 
     def save(self , *args , **kwargs):
 
-        self.type = UserAccount.Types.CONSULTOR
+        self.type = UserAccount.Types.CONSULTANT
         self.is_active= True
-        self.esConsultor = True
         self.is_staff = True
         self.has_perm('cuentas.view_consultor')
         return super().save(*args , **kwargs)
 
-class Administrador(UserAccount):
+class Administrator(UserAccount):
 
     
 
@@ -204,66 +201,17 @@ class Administrador(UserAccount):
         self.is_staff = True
         self.is_active = True
         self.is_admin = True
-        self.es_clienteInterno = True
         return super().save(*args , **kwargs)
 
 
-
-
-
-
-class Sistema(models.Model):
-
-    usuario = models.ForeignKey(UserAccount, on_delete=models.DO_NOTHING)
-
-    def actualizarEstadoProcesoLicitacionVenta():
-        """ Metodo para actualizar estado proceso de la venta internacional """
-
-        pass
-
-    def enviarReporteResumenVentaEmail():
-        """ Metodo para enviar reporte de resumen de la venta internacional al correo de los involucrados """
-        
-        pass
-
-    def crearSubastaTransporte():
-        """ Metodo para crear subasta de transporte """
-
-        pass
-
-    def adjudicarSubasta():
-        """ Metodo para adjudicar subasta """
-
-        pass
-
-    def determinarCantidadProductoresMercancia():
-        """ Metodo para determinar cantidad productores de mercancia que abasteceran una venta"""
-
-        pass
-
-    def evaluarRendimiento():
-        """ Metodo para evaluar rendimiento """
-
-        pass
-    
-    def evaluarPerdidaFruta():
-        """ Metodo para evaluar perdida de fruta """
-
-        pass
-
-    def crearReporteRol():
-        """ Metodo para crear reporte por rol """
-
-        pass
-
 @receiver(post_save)
 def afterCreateMail(sender, instance=None, created= False, **kwargs):
-    if sender.__name__ in ("ComercianteExtranjero","ComercianteLocal","Productor","Transportista"):
+    if sender.__name__ in ("InternationalTrader","LocalTrader","Producer","Carrier"):
         if created:
             print(instance.email)
 
-            subject = f"Bienvenido {instance.firstName} {instance.lastName} a Maipo Grande"
-            message = f"Estimado {instance.firstName} {instance.lastName}:\nEn Maipo Grande estamos muy contentos de contar con tu apoyo.\nEn las proximas horas uno de nuestros ejecutivos se contactará contigo "
+            subject = f"Welcome {instance.firstName} {instance.lastName} to Maipo Grande"
+            message = f"Dear Mr/Ms {instance.firstName} {instance.lastName}:\nAt Maipo Grande, we are very pleased to have you on board.\nIn the next few hours one of our executives will contact you."
             lista = []
             lista.append(instance.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
@@ -280,7 +228,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         # message:
         email_plaintext_message,
         # from:
-        "noreply@somehost.local",
+        "feriaMaipoGrande@gmail.com",
         # to:
         [reset_password_token.user.email]
     )

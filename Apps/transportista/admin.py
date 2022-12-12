@@ -6,4 +6,4 @@ from .models import *
 # Register your models here.
 
 
-admin.site.register(PostulacionLicitacionTransporte)
+admin.site.register(TransportPostulation)

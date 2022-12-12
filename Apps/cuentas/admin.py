@@ -33,16 +33,16 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(UserAccount, UserAdmin)
 
-admin.site.register(ComercianteExtranjero, UserAdmin)
-admin.site.register(ComercianteLocal)
-admin.site.register(Productor)
-admin.site.register(Transportista)
-admin.site.register(Consultor)
+admin.site.register(InternationalTrader, UserAdmin)
+admin.site.register(LocalTrader)
+admin.site.register(Producer)
+admin.site.register(Carrier)
+admin.site.register(Consultant)
 # admin.site.register(Mercancia)
 # admin.site.register(VentaNacional)
 # admin.site.register(LicitacionInternacional)
 #admin.site.register(SubastaTransporte)
-admin.site.register(Sistema)
+#admin.site.register(Sistema)
 
 
 

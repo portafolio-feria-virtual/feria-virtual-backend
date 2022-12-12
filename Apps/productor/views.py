@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
 from django.conf import settings
+import urllib.parse
+import json
 
 from Apps.transportista.models import *
 from rest_framework.parsers import FileUploadParser, MultiPartParser,FormParser
@@ -31,52 +33,74 @@ config = {
   "messagingSenderId": "470955898689",
   "appId": "1:470955898689:web:9419cfd8e1e9da78d613c0",
   "measurementId": "G-9M85SHKCEV",
-  "databaseURL":"gs://bucket-portafolio.appspot.com"
+  "databaseURL":"gs://bucket-portafolio.appspot.com",
+ #"serviceAccount":"Apps/productor/bucket-portafolio-firebase-adminsdk-gii80-6c536b1389.json"
 }
 
 firebase = pyrebase.initialize_app(config)
 storage = firebase.storage()
 storage.child()
+
 # Create your views here.
-class OfertaView(generics.CreateAPIView):
+class AddOfferView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = OfertaSerializer
+    serializer_class = OfferSerializer
 
 class SeeAllOfferView(APIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = OfertaSerializer
+    serializer_class = OfferSerializer
 
     def get(self, request):
-        ofertas = Oferta.objects.all().filter(productor= self.request.user.id)
-        serializador = self.serializer_class(ofertas, many=True)
+        offers = Offer.objects.all().filter(productor= self.request.user.id)
+        serializador = self.serializer_class(offers, many=True)
         return Response(serializador.data)
 
 
-class VentaLocalCreateView(generics.CreateAPIView):
+class CreateLocalSaleView(generics.CreateAPIView):
   permission_classes = (permissions.AllowAny, )
-  serializer_class = VentaLocalSerializer
+  serializer_class = LocalSaleSerializer
 
-class ImagenVentaLocalView(generics.CreateAPIView):
-  model = ImagenVentaLocal
+class LocalSaleImageView(generics.CreateAPIView):
+  model = LocalSaleImage
   permission_classes = [permissions.AllowAny]
-  serializer_class = ImageSerializer
+  serializer_class = LocalSaleImageSerializer
 
   def perform_create(self, serializer):
     fs = FileSystemStorage()
     data = self.request.data
     file = self.request.FILES['image']
-    ventaLocal = VentaLocal.objects.get(id=data["ventaLocal"])
-    productor = Productor.objects.get(id=ventaLocal.productor.id)
-    print(ventaLocal)
+    localSale = LocalSale.objects.get(id=data["ventaLocal"])
+    producer = Producer.objects.get(id=localSale.producer.id)
+    print(LocalSale)
     print(file)
     filename = fs.save(file.name, file)
     file_url = fs.url(filename)
     print(filename)
     print(file_url)
-    storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
+    storage.child("files/" + producer.businessName+"/"+localSale.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
     serializer.save()   
-    
-class AceptarRechazarAdjudicacion(APIView):
+  
+# class RetrieveImagesView(APIView):
+#   model = ImagenVentaLocal
+#   permission_classes = [permissions.AllowAny]
+
+#   def get(self,request):
+#     all_files = storage.child("/files/Caracolas/Venta de caracolas").list_files()
+#     print(all_files)
+#     archivos = {}
+#     for idx, file in enumerate(all_files):
+#       try:
+#         print(file.name)
+       
+#         z = storage.child(file.name).get_url(None)
+#         archivos[idx] = str(z)
+#         print(f"imprimiendo {z} ")
+
+#       except:
+#         print("retrieve failed")
+#     return Response(archivos)
+
+class AcceptDeclineAssignmentView(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
   
   permission_classes = [permissions.AllowAny]
@@ -85,48 +109,66 @@ class AceptarRechazarAdjudicacion(APIView):
 
     data = self.request.data
     id = data["id"]
-    oferta = Oferta.objects.get(id=id)
+    offer = Offer.objects.get(id=id)
     option = data["option"]
     if option=="Accept":
-      oferta.accepted = "ACCEPTED"
-      oferta.confirmed= True
-    if option == "Reject":  
-      oferta.accepted = "REJECTED"
-      oferta.closed = True
+      offer.status = "ACCEPTED"
+      offer.confirmed= True
+    if option == "Decline":  
+      offer.Status = "REJECTED"
+      offer.closed = True
 
-    serializer = OfertaSerializer(oferta)
+    serializer = OfferSerializer(offer)
     return Response(serializer.data)
 
 
     
 
-class EstadoEnvioGeneralView(APIView):
+class ShippingStatusGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     user = self.request.user
-    envios = Envio.objects.all().filter(productor= user.id).exclude(status="PREPARATION")
-    serializers = envioSerializer(envios, many=True)
+    shippings = Shipping.objects.all().filter(producer=user.id).exclude(status="PREPARATION")
+    serializers = ShippingSerializer(shippings, many=True)
 
     return Response(serializers.data)
-class EstadoEnvioProductorView(APIView):
+class ShippingStatusProducerView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     user = self.request.user
-    envios = Envio.objects.all().filter(productor= user.id, status="PREPARATION")
-    serializers = envioSerializer(envios, many=True)
+    shippings = Shipping.objects.all().filter(producer= user.id, status="PREPARATION")
+    serializers = ShippingSerializer(shippings, many=True)
 
     return Response(serializers.data)
 
-class MarcarEnvio(APIView):
+class MarkShipping(APIView):
   permission_classes = [permissions.AllowAny]
 
   def post(self, request):
     data = self.request.data
     user = self.request.user
 
-    envio = Envio.objects.get(id =data["id"])
+    envio = Shipping.objects.get(id =data["id"])
     envio.status = "AWAITING CARRIER"
 
 
+class AcceptDeclineSaleOffer(APIView):
+  permission_classes = [permissions.AllowAny]
+
+  def post(self, request):
+
+    data = self.request.data
+    id = data["id"]
+    offer = Offer.objects.get(id=id)
+    option = data["option"]
+    if option=="Accept":
+      offer.status = "ACCEPTED"
+      offer.confirmed= True
+    if option == "Decline":  
+      offer.status = "REJECTED"
+      offer.closed = True
+
+    serializer = OfferSerializer(offer)
+    return Response(serializer.data)
