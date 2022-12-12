@@ -16,6 +16,7 @@ class ContractSerializer(serializers.ModelSerializer):
             return data
         else:
             raise serializers.ValidationError('Closing date is prior to start date')
+            
 
 class UpdateContractSerializer(serializers.ModelSerializer):
     class Meta:

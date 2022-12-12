@@ -5,5 +5,5 @@ from .models import *
 class BuyingOfferSerializer(serializers.Serializer): 
     class Meta:
         model = BuyingOffer
-        fields = ('producer', 'localTrader', 'status', 'orderDate', 'transport')
+        fields = ("__all__")
         

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from PIL import Image
 import pyrebase
 import os
 # Create your views here.
@@ -51,35 +52,129 @@ class SeeAllOfferView(APIView):
     serializer_class = OfferSerializer
 
     def get(self, request):
-        offers = Offer.objects.all().filter(productor= self.request.user.id)
+      try:
+        offers = Offer.objects.all().filter(producer= self.request.user.id)
         serializador = self.serializer_class(offers, many=True)
         return Response(serializador.data)
+      except:
+        return Response(status.HTTP_400_BAD_REQUEST)
+
+class SeeAllLocalSalesView(APIView):
+  permission_classes = (permissions.AllowAny, )
+  serializer_class = LocalSale
+
+  def get(self, request):
+    try:
+      sales = LocalSale.objects.all().filter(producer= self.request.user.id)
+      serializer = self.serializer_class(sales, many=True)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+
+class SearchSaleView(APIView):
+  permission_classes = (permissions.AllowAny, )
+  #serializer_class = LocalSaleSerializer
+  def post(self, request):
+    data = self.request.data
+    user = self.request.user
+    try:
+      lSale = LocalSale.objects.get(id = data['id'])
+      serializer = LocalSaleSerializer(lSale)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+
+class CloseSaleView(APIView):
+  permission_classes = (permissions.AllowAny, )
+  def post(self, request):
+    data = self.request.data
+    user = self.request.user
+    try:
+      lSale = LocalSale.objects.get(id = data["id"])
+      lSale.status = "CLOSED"
+      lSale.closed = True
+      serializer = LocalSaleSerializer(lSale)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+class CancelOfferView(APIView):
+  permission_classes = (permissions.AllowAny, )
+  def post(self, request):
+    data = self.request.data
+    user = self.request.user
+    try:
+      offer = Offer.objects.get(id = data["id"])
+
+      offer.closed = True
+      serializer = LocalSaleSerializer(offer)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+
+class SearchOfferView(APIView):
+  permission_classes = (permissions.AllowAny, )
+  serializer_class = OfferSerializer
+  def post(self, request):
+    data = self.request.data
+    user = self.request.user
+    try:
+      lSale = Offer.objects.get(id=data["id"])
+      serializer = self.serializer_class(lSale)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+
 
 
 class CreateLocalSaleView(generics.CreateAPIView):
   permission_classes = (permissions.AllowAny, )
-  serializer_class = LocalSaleSerializer
+  serializer_class = AddLocalSaleSerializer
 
 class LocalSaleImageView(generics.CreateAPIView):
   model = LocalSaleImage
   permission_classes = [permissions.AllowAny]
   serializer_class = LocalSaleImageSerializer
 
+  # def perform_create(self, serializer):
+  #   fs = FileSystemStorage()
+  #   data = self.request.data
+  #   file = self.request.FILES['image']
+  #   localSale = LocalSale.objects.get(id=data["ventaLocal"])
+  #   producer = Producer.objects.get(id=localSale.producer.id)
+  #   print(LocalSale)
+  #   print(file)
+  #   filename = fs.save(file.name, file)
+  #   file_url = fs.url(filename)
+  #   print(filename)
+  #   print(file_url)
+  #   storage.child("files/" + producer.businessName+"/"+localSale.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
+  #   serializer.save()   
   def perform_create(self, serializer):
-    fs = FileSystemStorage()
+    
     data = self.request.data
-    file = self.request.FILES['image']
-    localSale = LocalSale.objects.get(id=data["ventaLocal"])
+    try:
+      file = self.request.FILES["image"]
+    except:
+      file = None
+    
+    localSale = LocalSale.objects.get(id=data["localSale"])
     producer = Producer.objects.get(id=localSale.producer.id)
-    print(LocalSale)
-    print(file)
-    filename = fs.save(file.name, file)
-    file_url = fs.url(filename)
-    print(filename)
-    print(file_url)
-    storage.child("files/" + producer.businessName+"/"+localSale.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
-    serializer.save()   
-  
+    if localSale and producer:
+      if not file == None:
+        file._name= str(uuid.uuid4())+"."+file._name.split('.')[1]
+        fs = FileSystemStorage("media/localSales/" + producer.businessName+"/"+localSale.name+"/")
+        
+        filename = fs.save(file.name, file)
+        print(filename)
+        # file_url = fs.url(filename)
+        serializer.save(localSale=localSale, image= f"localSales/{producer.businessName}/{localSale.name}/{filename}")
+        return Response(status.HTTP_200_OK)
+      else: 
+        return Response({"message":"please, provide a file"},status.HTTP_400_BAD_REQUEST)
+        
+
+
+
 # class RetrieveImagesView(APIView):
 #   model = ImagenVentaLocal
 #   permission_classes = [permissions.AllowAny]
@@ -100,6 +195,27 @@ class LocalSaleImageView(generics.CreateAPIView):
 #         print("retrieve failed")
 #     return Response(archivos)
 
+class RetrieveImagesView(APIView):
+  model = LocalSaleImage
+  # serializer_class = LocalSaleImageSerializer
+  permission_classes = [permissions.AllowAny]
+  def post(self, request):
+    data = self.request.data
+    localSale = LocalSale.objects.get(id=data["localSale"])
+    images = self.model.objects.all().filter(localSale=localSale)
+    archivos = {}
+    try:
+      for idx, image in enumerate(images):
+        temp = image.image.url
+        archivos[idx] = request.build_absolute_uri(image.image.url)
+        #archivos[idx]= RetrieveLocalSaleImageSerializer(image).data
+      
+      return Response(archivos, status.HTTP_200_OK)
+
+    except:
+        return Response(status.HTTP_400_BAD_REQUEST)
+
+
 class AcceptDeclineAssignmentView(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
   
@@ -109,17 +225,20 @@ class AcceptDeclineAssignmentView(APIView):
 
     data = self.request.data
     id = data["id"]
-    offer = Offer.objects.get(id=id)
-    option = data["option"]
-    if option=="Accept":
-      offer.status = "ACCEPTED"
-      offer.confirmed= True
-    if option == "Decline":  
-      offer.Status = "REJECTED"
-      offer.closed = True
+    try:
+      offer = Offer.objects.get(id=id)
+      option = data["option"]
+      if option=="Accept":
+        offer.status = "ACCEPTED"
+        offer.confirmed= True
+      if option == "Decline":  
+        offer.Status = "REJECTED"
+        offer.closed = True
 
-    serializer = OfferSerializer(offer)
-    return Response(serializer.data)
+      serializer = OfferSerializer(offer)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
 
 
     
@@ -151,24 +270,64 @@ class MarkShipping(APIView):
     user = self.request.user
 
     envio = Shipping.objects.get(id =data["id"])
-    envio.status = "AWAITING CARRIER"
+    if envio:
+      envio.status = "AWAITING CARRIER"
+      envio.save()
+      return Response(status.HTTP_200_OK)
+    else:
+      return Response(status.HTTP_400_BAD_REQUEST)
 
 
+
+    serializer = OfferSerializer(offer)
+    return Response(serializer.data)
+
+class RestockLocalSale(APIView):
+  model = LocalSale
+  serializer_class = LocalSaleSerializer
+  permission_classes = [permissions.AllowAny]
+
+  def patch(self, request):
+    data = self.request.data
+    lSale = LocalSale.objects.get(id=data["id"])
+    if lSale:
+
+      lSale.stock = data["stock"]
+      lSale.save()
+      return Response(status.HTTP_200_OK)
+    else:
+      return Response(status.HTTP_404_NOT_FOUND)
+
+
+class SeeAllSalesWithBuyingOfferView(APIView):
+
+  permission_classes = (permissions.AllowAny, )
+  serializer_class = SeeAllSalesWithBuyingOfferSerializer
+
+  def get(self, request):
+    try:
+      lSale= LocalSale.objects.all().filter(producer= self.request.user.id)
+      serializer = self.serializer_class(lSale, many=True)
+      return Response(serializer.data)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
+  
 class AcceptDeclineSaleOffer(APIView):
   permission_classes = [permissions.AllowAny]
 
   def post(self, request):
-
-    data = self.request.data
-    id = data["id"]
-    offer = Offer.objects.get(id=id)
-    option = data["option"]
-    if option=="Accept":
-      offer.status = "ACCEPTED"
-      offer.confirmed= True
-    if option == "Decline":  
-      offer.status = "REJECTED"
-      offer.closed = True
-
-    serializer = OfferSerializer(offer)
-    return Response(serializer.data)
+    try:
+      data = self.request.data
+      id = data["id"]
+      lSale = LocalSale.objects.get(id=id)
+      option = data["option"]
+      if option=="Accept":
+        offer.status = "ACCEPTED"
+        offer.confirmed= True
+        offer.save()
+      if option == "Decline":  
+        offer.status = "REJECTED"
+        offer.closed = True
+        offer.save()
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)

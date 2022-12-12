@@ -1,5 +1,6 @@
 from django.db import models
 from Apps.cuentas.models import *
+from Apps.productor.models import *
 
 # Create your models here.
 class BuyingOffer(models.Model):
@@ -8,10 +9,12 @@ class BuyingOffer(models.Model):
         ONTRACK = "ON TRACK", "On track"
         FINISHED = "FINISHED", "Finished"
         
-    producer = models.ForeignKey(Producer, on_delete=models.DO_NOTHING)
+    localSale = models.ForeignKey(LocalSale, on_delete=models.DO_NOTHING, related_name="buyingoffers")
     localTrader = models.ForeignKey(LocalTrader, on_delete=models.DO_NOTHING)
     status = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.PUBLISHED)
     orderDate = models.DateField(auto_now_add= True) 
-    transport = models.BooleanField(default=True)
+    quantity = models.IntegerField()
+    confirmed = models.BooleanField(default=False)
+    transport = models.BooleanField(default=False)
     
     

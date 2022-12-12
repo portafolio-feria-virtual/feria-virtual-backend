@@ -8,23 +8,23 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('Apps.cuentas.urls')),
-    path('api/comercianteExtranjero/',include('Apps.comercianteExtranjero.urls')),
-    path('api/comercianteLocal/',include('Apps.comercianteLocal.urls')),
-    path('api/productor/',include('Apps.productor.urls')),
-    path('api/transportista/',include('Apps.transportista.urls')),
-    path('api/consultor/',include('Apps.consultor.urls')),
+    path('api/internationalTrader/',include('Apps.comercianteExtranjero.urls')),
+    path('api/localTrader/',include('Apps.comercianteLocal.urls')),
+    path('api/producer/',include('Apps.productor.urls')),
+    path('api/carrier/',include('Apps.transportista.urls')),
+    path('api/consultant/',include('Apps.consultor.urls')),
 
-    path('api/administrador/',include('Apps.administrador.urls')),
+    path('api/administrator/',include('Apps.administrador.urls')),
 
     
 
-    # ...
-    # API Schema:
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-        # ...
+    # # ...
+    # # API Schema:
+    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # # Optional UI:
+    # path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    #     # ...
 
 
 

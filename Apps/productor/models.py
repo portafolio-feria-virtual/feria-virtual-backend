@@ -2,6 +2,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.mail import send_mail
+from django.core.validators import FileExtensionValidator
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.db import models
@@ -22,7 +23,7 @@ class Offer(models.Model):
     name = models.CharField(max_length=255, blank=True)
     offerDescription = models.CharField(max_length=255, blank=True)
     offerValue = models.IntegerField()
-    offerFileName = models.FileField(null=False, blank=False, default=None)
+    offerFile = models.FileField(null=False, blank=False, default=None, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     assigned = models.BooleanField(default=False)
     status = models.CharField(max_length = 30 , choices = Status.choices , default = Status.STANDBY)
     closed = models.BooleanField(default=False)
@@ -45,6 +46,8 @@ class LocalSale(models.Model):
     price = models.IntegerField()
     stock = models.IntegerField()
     location = models.CharField(max_length=255,blank=True)
+    closed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name
@@ -53,7 +56,8 @@ class LocalSale(models.Model):
 
 class LocalSaleImage(models.Model):
     localSale = models.ForeignKey(LocalSale, related_name="localsaleimage", on_delete=models.CASCADE)
-    image = models.ImageField(null=False, blank=False)
+    image = models.FileField(null=False, blank=False,validators=[ FileExtensionValidator(allowed_extensions=['png', 'jpeg', 'jpg', 'svg']),])
+
 
 
 @receiver(post_save)
@@ -61,7 +65,7 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
     if sender.__name__ == "LocalSale":
         if created:
             subject = f"Local Sale {instance.name} published"
-            producer = Producer.objects.get(id = instance.productor.id)
+            producer = Producer.objects.get(id = instance.producer.id)
             message = f"Dear {producer.firstName} {producer.lastName}:\n\nYour sale {instance.name} has been published successfuly.\nYou will be notified on any offer it receives.\n\nSincerely. Feria Virtual Maipo Grande"
             lista = []
             lista.append(producer.email)
@@ -72,7 +76,7 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
         if created:
             licitacion = Bid.objects.get(id=instance.licitacion.id)
             subject = f"Offer {instance.name} published at biddin proccess {licitacion} "
-            producer = Producer.objects.get(id = instance.productor.id)
+            producer = Producer.objects.get(id = instance.producer.id)
             message = f"Dear Mr/Ms {producer.firstName} {producer.lastName}:\n\nYour offer{instance.name} has been published successfully.\nYou will be notified of any change on it.\n\nSincerely. Feria Virtual Maipo Grande"
             lista = []
             lista.append(producer.email)
