@@ -42,42 +42,42 @@ storage = firebase.storage()
 storage.child()
 
 # Create your views here.
-class OfertaView(generics.CreateAPIView):
+class AddOfferView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = OfertaSerializer
+    serializer_class = OfferSerializer
 
 class SeeAllOfferView(APIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = OfertaSerializer
+    serializer_class = OfferSerializer
 
     def get(self, request):
-        ofertas = Oferta.objects.all().filter(productor= self.request.user.id)
-        serializador = self.serializer_class(ofertas, many=True)
+        offers = Offer.objects.all().filter(productor= self.request.user.id)
+        serializador = self.serializer_class(offers, many=True)
         return Response(serializador.data)
 
 
-class VentaLocalCreateView(generics.CreateAPIView):
+class CreateLocalSaleView(generics.CreateAPIView):
   permission_classes = (permissions.AllowAny, )
-  serializer_class = VentaLocalSerializer
+  serializer_class = LocalSaleSerializer
 
-class ImagenVentaLocalView(generics.CreateAPIView):
-  model = ImagenVentaLocal
+class LocalSaleImageView(generics.CreateAPIView):
+  model = LocalSaleImage
   permission_classes = [permissions.AllowAny]
-  serializer_class = ImageSerializer
+  serializer_class = LocalSaleImageSerializer
 
   def perform_create(self, serializer):
     fs = FileSystemStorage()
     data = self.request.data
     file = self.request.FILES['image']
-    ventaLocal = VentaLocal.objects.get(id=data["ventaLocal"])
-    productor = Productor.objects.get(id=ventaLocal.productor.id)
-    print(ventaLocal)
+    localSale = LocalSale.objects.get(id=data["ventaLocal"])
+    producer = Producer.objects.get(id=localSale.producer.id)
+    print(LocalSale)
     print(file)
     filename = fs.save(file.name, file)
     file_url = fs.url(filename)
     print(filename)
     print(file_url)
-    storage.child("files/" + productor.businessName+"/"+ventaLocal.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
+    storage.child("files/" + producer.businessName+"/"+localSale.name+"/"+str(uuid.uuid4())).put("media/" + file.name)
     serializer.save()   
   
 # class RetrieveImagesView(APIView):
@@ -100,7 +100,7 @@ class ImagenVentaLocalView(generics.CreateAPIView):
 #         print("retrieve failed")
 #     return Response(archivos)
 
-class AceptarRechazarAdjudicacionView(APIView):
+class AcceptDeclineAssignmentView(APIView):
   """ Vista que permite aceptar o rechazar la licitación que se ha adjudicado el productor"""
   
   permission_classes = [permissions.AllowAny]
@@ -109,48 +109,66 @@ class AceptarRechazarAdjudicacionView(APIView):
 
     data = self.request.data
     id = data["id"]
-    oferta = Oferta.objects.get(id=id)
+    offer = Offer.objects.get(id=id)
     option = data["option"]
     if option=="Accept":
-      oferta.accepted = "ACCEPTED"
-      oferta.confirmed= True
-    if option == "Reject":  
-      oferta.accepted = "REJECTED"
-      oferta.closed = True
+      offer.status = "ACCEPTED"
+      offer.confirmed= True
+    if option == "Decline":  
+      offer.Status = "REJECTED"
+      offer.closed = True
 
-    serializer = OfertaSerializer(oferta)
+    serializer = OfferSerializer(offer)
     return Response(serializer.data)
 
 
     
 
-class EstadoEnvioGeneralView(APIView):
+class ShippingStatusGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     user = self.request.user
-    envios = Envio.objects.all().filter(productor= user.id).exclude(status="PREPARATION")
-    serializers = envioSerializer(envios, many=True)
+    shippings = Shipping.objects.all().filter(producer=user.id).exclude(status="PREPARATION")
+    serializers = ShippingSerializer(shippings, many=True)
 
     return Response(serializers.data)
-class EstadoEnvioProductorView(APIView):
+class ShippingStatusProducerView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     user = self.request.user
-    envios = Envio.objects.all().filter(productor= user.id, status="PREPARATION")
-    serializers = envioSerializer(envios, many=True)
+    shippings = Shipping.objects.all().filter(producer= user.id, status="PREPARATION")
+    serializers = ShippingSerializer(shippings, many=True)
 
     return Response(serializers.data)
 
-class MarcarEnvio(APIView):
+class MarkShipping(APIView):
   permission_classes = [permissions.AllowAny]
 
   def post(self, request):
     data = self.request.data
     user = self.request.user
 
-    envio = Envio.objects.get(id =data["id"])
+    envio = Shipping.objects.get(id =data["id"])
     envio.status = "AWAITING CARRIER"
 
 
+class AcceptDeclineSaleOffer(APIView):
+  permission_classes = [permissions.AllowAny]
+
+  def post(self, request):
+
+    data = self.request.data
+    id = data["id"]
+    offer = Offer.objects.get(id=id)
+    option = data["option"]
+    if option=="Accept":
+      offer.status = "ACCEPTED"
+      offer.confirmed= True
+    if option == "Decline":  
+      offer.status = "REJECTED"
+      offer.closed = True
+
+    serializer = OfferSerializer(offer)
+    return Response(serializer.data)

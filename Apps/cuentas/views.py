@@ -20,31 +20,31 @@ from rest_framework.permissions import IsAuthenticated
 
 
 #@method_decorator(csrf_protect, name='dispatch')
-class ExtranjeroSignupView(generics.CreateAPIView):
+class InternationalSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ComercianteExtranjeroSignupSerializer
+    serializer_class = InternationalTraderSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
 class LocalSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ComercianteLocalSignupSerializer
+    serializer_class = LocalTraderSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
-class ProductorSignupView(generics.CreateAPIView):
+class ProducerSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ProductorSignupSerializer
+    serializer_class = ProducerSignupSerializer
 
 #@method_decorator(csrf_protect, name='dispatch')
-class TransportistaSignupView(generics.CreateAPIView):
+class CarrierSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = TransportistaSignupSerializer
+    serializer_class = CarrierSignupSerializer
 
-class AdministradorSignupView(generics.CreateAPIView):
+class AdministratorSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = AdministradorSignupSerializer
-class ConsultorSignupView(generics.CreateAPIView):
+    serializer_class = AdministratorSignupSerializer
+class ConsultantSignupView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    serializer_class = ConsultorSignupSerializer
+    serializer_class = ConsultantSignupSerializer
 
 
 
@@ -178,31 +178,31 @@ class UpdateEmailView(generics.UpdateAPIView):
    
     def get_serializer_class(self):
         user = self.request.user
-        if user.type == "PRODUCTOR":
-            return UpdateEmailProductorSerializer
-        if user.type == "COMERCIANTE EXTRANJERO":
+        if user.type == "PRODUCER":
+            return UpdateEmailProducerSerializer
+        if user.type == "INTERNATIONAL TRADER":
             return UpdateEmailExtranjeroSerializer
-        if user.type == "COMERCIANTE LOCAL":
+        if user.type == "LOCAL TRADER":
             return UpdateEmailLocalSerializer
-        if user.type == "TRANSPORTISTA":
-            return UpdateEmailTransportistaSerializer
+        if user.type == "CARRIER":
+            return UpdateEmailCarrierSerializer
         else:
             pass
 
     def get_object(self):
         user = self.request.user
         data = self.request.data
-        if user.type == "PRODUCTOR":
-            productor = Productor.objects.get(id= user.id)
+        if user.type == "PRODUCER":
+            productor = Producer.objects.get(id= user.id)
             return productor
-        if user.type == "COMERCIANTE EXTRANJERO":
-            extranjero = ComercianteExtranjero.objects.get(id= user.id)
+        if user.type == "INTERNATIONAL TRADER":
+            extranjero = InternationalTrader.objects.get(id= user.id)
             return extranjero
-        if user.type == "COMERCIANTE LOCAL":
-            cLocal = ComercianteLocal.objects.get(id= user.id)
+        if user.type == "LOCAL TRADER":
+            cLocal = LocalTrader.objects.get(id= user.id)
             return cLocal
-        if user.type == "TRANSPORTISTA":
-            transportista = Transportista.objects.get(id= user.id)
-            return transportista
+        if user.type =="CARRIER":
+            carrier = Carrier.objects.get(id= user.id)
+            return carrier
         else:
             pass

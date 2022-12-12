@@ -2,23 +2,23 @@ from django.db import models
 from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework.response import Response
-from Apps.comercianteExtranjero.models import Licitacion
-from Apps.cuentas.models import Transportista
+from Apps.comercianteExtranjero.models import Bid
+from Apps.cuentas.models import Carrier
 from Apps.productor.models import *
 from Apps.comercianteExtranjero.models import *
 
 # Create your models here.
 
-class PostulacionLicitacionTransporte(models.Model):
+class TransportPostulation(models.Model):
     class Status(models.TextChoices):
 
         ACCEPTED = "ACCEPTED" , "accepted"
         REFUSED = "REJECTED" , "rejected"
         STANDBY = "STANDBY", "standby"
 
-    licitacion = models.ForeignKey(Licitacion, on_delete=models.DO_NOTHING, default= None)
+    bid = models.ForeignKey(Bid, related_name="postulations",on_delete=models.DO_NOTHING, default= None)
     description = models.CharField(max_length=255, blank=True)
-    transportista = models.ForeignKey(Transportista, on_delete=models.DO_NOTHING)
+    carrier = models.ForeignKey(Carrier, on_delete=models.DO_NOTHING)
     capacity = models.CharField(max_length=255, blank=True)
     cooling = models.BooleanField(default=False)
     postDate = models.DateField(auto_now_add= True) 
@@ -28,7 +28,7 @@ class PostulacionLicitacionTransporte(models.Model):
     closed = models.BooleanField(default=False)
     confirmed =  models.BooleanField(default=False)
 
-class Envio(models.Model):
+class Shipping(models.Model):
     class Status(models.TextChoices):
         PREPARATION = "PREPARATION" , "preparation"
         AWAITING_CARRIER = "AWAITING_CARRIER" , "awaiting carrier"
@@ -37,16 +37,16 @@ class Envio(models.Model):
         RECEPTIONED = "RECEPTIONED", "receptioned"
 
     status = models.CharField(max_length = 30 , choices = Status.choices , default = Status.PREPARATION)
-    licitacion = models.ForeignKey(Licitacion, on_delete=models.DO_NOTHING, blank= True, null=True)
-    productor= models.ForeignKey(Productor, on_delete=models.DO_NOTHING, blank= True, null=True)
-    transportista= models.ForeignKey(Transportista, on_delete=models.DO_NOTHING, blank= True, null=True)
+    bid = models.ForeignKey(Bid, on_delete=models.DO_NOTHING, blank= True, null=True)
+    producer= models.ForeignKey(Producer, on_delete=models.DO_NOTHING, blank= True, null=True)
+    carrier = models.ForeignKey(Carrier, on_delete=models.DO_NOTHING, blank= True, null=True)
 
-@receiver(post_save, sender= PostulacionLicitacionTransporte)
+@receiver(post_save, sender= TransportPostulation)
 def afterCreateMail(instance=None, created= False, **kwargs):
     if created:
-            subject = f"Venta {instance.name} creada"
-            transportista = Transportista.objects.get(id = instance.transportista.id)
-            message = f"Estimado {transportista.firstName} {transportista.lastName}:\n\nSu venta de {instance.name} ha sido publicada satisfactoriamente.\nSe le notificará de las ofertas que reciba.\n\nAtentamente. Feria Virtual Maipo Grande"
+            subject = f"Postulation {instance.name} published"
+            carrier = Carrier.objects.get(id = instance.carrier.id)
+            message = f"Dear Mr/Ms {carrier.firstName} {carrier.lastName}:\n\nYour postulation {instance.name} has been published successfuly.\nYou will be notified on any change.\n\nsincerely. Feria Virtual Maipo Grande"
             lista = []
-            lista.append(transportista.email)
+            lista.append(carrier.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)

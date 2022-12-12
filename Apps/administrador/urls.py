@@ -2,13 +2,13 @@ from .views import *
 from django.urls import path,include
 
 urlpatterns = [
-    path('addContract/', CrearContratoView.as_view()),
-    path('viewContract/', VerContratosView.as_view()),
-    path('buscarContrato/', BuscarContratoView.as_view()),
-    path('verLicitacion/', VerLicitacionView.as_view()),
-    path('verOferta/', VerOfertaView.as_view()),
-    path('verVentaLocal/', VerVentaLocalView.as_view()),
-    path('editarContrato/', EditarContratoView.as_view()),
+    path('addContract/', CreateContractView.as_view()),
+    path('viewAllContract/', SeeAllContractsView.as_view()),
+    path('searchContract/', SearchContractView.as_view()),
+    path('seeAllBids/', SeeAllBidsView.as_view()),
+    path('seeAllOffers/', SeeAllOffersView.as_view()),
+    path('seeAllLocalSales/', SeeAllLocalSalesView.as_view()),
+    path('editContract/', EditContractView.as_view()),
 ]
 
 

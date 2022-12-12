@@ -8,49 +8,49 @@ from rest_framework import generics,permissions
 
 class addPostulacionLicitacionView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class= addPostulacionLicitacionSerializer
+    serializer_class= addTransportPostulationSerializer
 
-class seeAllPostulaciones(APIView):
+class SeeAllPostulations(APIView):
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     data = self.request.data
     user = self.request.user
-    postulaciones = PostulacionLicitacionTransporte.objects.all().filter(transportista= user.id)
-    serializer = addPostulacionLicitacionSerializer(postulaciones, many = True)
+    postulations = TransportPostulation.objects.all().filter(transportista= user.id)
+    serializer = addTransportPostulationSerializer(postulations, many = True)
     return Response(serializer.data)
-class AceptarRechazarPostulacionTransporteView(APIView):
+class AcceptDeclineTransportPostulationView(APIView):
   """ Vista que permite aceptar o rechazar la postulación de transporte adjudicada por el transportista """
   permission_classes = [permissions.AllowAny]
   def post(self, request):
     data = self.request.data
     id = data["id"]
-    postulacion = PostulacionLicitacionTransporte.objects.get(id=id)
+    postulation = TransportPostulation.objects.get(id=id)
     option = data["option"]
     if option=="Accept":
-      postulacion.accepted = "ACCEPTED"
-      postulacion.confirmed = True
-    if option == "Reject":  
-      postulacion.accepted= "REJECTED"
-      postulacion.closed = True
+      postulation.accepted = "ACCEPTED"
+      postulation.confirmed = True
+    if option == "Decline":  
+      postulation.accepted= "DECLINED"
+      postulation.closed = True
 
-class EstadoEnvioGeneralView(APIView):
+class ShippingStatusGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
     user = self.request.user
-    envios = Envio.objects.all().filter(transportista= user.id)
-    serializers = envioSerializer(envios, many=True)
+    envios = Shipping.objects.all().filter(transportista= user.id)
+    serializers = ShippingSerializer(envios, many=True)
     return Response(serializers.data)
 
-class cambiarEstadoEnvioView(APIView):
+class UpdateShippingStatusView(APIView):
   permission_classes = [permissions.AllowAny]
-  estados = ["PREPARATION","AWAITING_CARRIER","RECEIVED_BY_CARRIER","ON_TRACK","RECEPTIONED"]
+  stages = ["PREPARATION","AWAITING_CARRIER","RECEIVED_BY_CARRIER","ON_TRACK","RECEPTIONED"]
   def post(self, request):
     data = self.request.data
     user = self.request.user
 
-    envio = Envio.objects.get(id =data["id"])
-    if envio.status != "RECEPTIONED":
-      indice = self.estados.index(envio.status)
-      envio.status = self.estados[indice+1]
+    shipping = Shipping.objects.get(id =data["id"])
+    if shipping.status != "RECEPTIONED":
+      index = self.stages.index(shipping.status)
+      shipping.status = self.stages[index+1]
     

@@ -4,6 +4,6 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework import permissions
 # Create your views here.
-class CrearSolicitudCompraView(generics.CreateAPIView):
+class CreateBuyingOfferView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = SolicitudCompraSerializer
+    serializer_class = BuyingOfferSerializer

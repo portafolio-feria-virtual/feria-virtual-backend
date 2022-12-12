@@ -5,6 +5,6 @@ from .models import *
 # Register your models here.
 
 
-admin.site.register(Oferta)
-admin.site.register(VentaLocal)
-admin.site.register(ImagenVentaLocal)
+admin.site.register(Offer)
+admin.site.register(LocalSale)
+admin.site.register(LocalSaleImage)

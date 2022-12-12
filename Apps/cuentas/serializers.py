@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserAccount
-        fields = ('type','email', 'password',"firstName","lastName","address","phone","esComercianteExtranjero","esComercianteLocal","esConsultor","esProductor","esTransportista")
+        fields = ('type','email', 'password',"firstName","lastName","address","phone")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
@@ -37,9 +37,9 @@ class ChangeEmailSerializer(serializers.Serializer):
 
 
 # A serializer class that is used to convert the data into JSON format.
-class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
+class InternationalTraderSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ComercianteExtranjero
+        model = InternationalTrader
         fields=('email', 'password',"firstName","lastName","businessName","address","phone","country")
 
 
@@ -50,19 +50,19 @@ class ComercianteExtranjeroSignupSerializer(serializers.ModelSerializer):
         return make_password(value)
 
 # A serializer class that is used to serialize the data that is passed to the API.
-class ComercianteLocalSignupSerializer(serializers.ModelSerializer):
+class LocalTraderSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ComercianteLocal
+        model = LocalTrader
         fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
     def validate_password(self, value):
         return make_password(value)
-# A serializer class that will be used to create a new productor.
-class ProductorSignupSerializer(serializers.ModelSerializer):
+# A serializer class that will be used to create a new Producer.
+class ProducerSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Productor
+        model = Producer
         fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut","productType")
     password = serializers.CharField(
         min_length=8, write_only=True)
@@ -70,28 +70,28 @@ class ProductorSignupSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         return make_password(value)
 
-# A serializer class that will be used to create a new transportista.
-class TransportistaSignupSerializer(serializers.ModelSerializer):
+# A serializer class that will be used to create a new Carrier.
+class CarrierSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Transportista
+        model = Carrier
         fields=('email', 'password',"firstName","lastName","address","phone","documentNumber","businessName","rut")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
     def validate_password(self, value):
         return make_password(value)
-class AdministradorSignupSerializer(serializers.ModelSerializer):
+class AdministratorSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Administrador
+        model = Administrator
         fields=('email', 'password',"firstName","lastName")
     password = serializers.CharField(
         min_length=8, write_only=True)
 
     def validate_password(self, value):
         return make_password(value)
-class ConsultorSignupSerializer(serializers.ModelSerializer):
+class ConsultantSignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Consultor
+        model = Consultant
         fields=('email', 'password',"firstName","lastName")
     password = serializers.CharField(
         min_length=8, write_only=True)
@@ -105,13 +105,13 @@ class UpdateEmailExtranjeroSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = ComercianteExtranjero
+        model = InternationalTrader
         fields = ( 'email',)
         
 
     def validate_email(self, value):
         user = self.context['request'].user
-        if ComercianteExtranjero.objects.exclude(pk=user.pk).filter(email=value).exists():
+        if InternationalTrader.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError({"email": "This email is already in use."})
         return value
 
@@ -129,13 +129,13 @@ class UpdateEmailLocalSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = ComercianteLocal
+        model = LocalTrader
         fields = ( 'email',)
         
 
     def validate_email(self, value):
         user = self.context['request'].user
-        if ComercianteLocal.objects.exclude(pk=user.pk).filter(email=value).exists():
+        if LocalTrader.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError({"email": "This email is already in use."})
         return value
 
@@ -149,17 +149,17 @@ class UpdateEmailLocalSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-class UpdateEmailProductorSerializer(serializers.ModelSerializer):
+class UpdateEmailProducerSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = Productor
+        model = Producer
         fields = ( 'email',)
         
 
     def validate_email(self, value):
         user = self.context['request'].user
-        if Productor.objects.exclude(pk=user.pk).filter(email=value).exists():
+        if Producer.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError({"email": "This email is already in use."})
         return value
 
@@ -173,17 +173,17 @@ class UpdateEmailProductorSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-class UpdateEmailTransportistaSerializer(serializers.ModelSerializer):
+class UpdateEmailCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = Transportista
+        model = Carrier
         fields = ( 'email',)
         
 
     def validate_email(self, value):
         user = self.context['request'].user
-        if Transportista.objects.exclude(pk=user.pk).filter(email=value).exists():
+        if Carrier.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError({"email": "This email is already in use."})
         return value
 

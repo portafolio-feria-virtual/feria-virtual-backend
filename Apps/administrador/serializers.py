@@ -4,9 +4,9 @@ from django.utils import timezone
 from datetime import datetime
 from .models import *
 
-class ContratoSerializer(serializers.ModelSerializer):
+class ContractSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contrato
+        model = Contract
         fields = ('type','companyName', 'initDate', 'endDate', 'fileName', 'isActive')
 
     nowDate = datetime.now().date()
@@ -15,11 +15,11 @@ class ContratoSerializer(serializers.ModelSerializer):
             
             return data
         else:
-            raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')
+            raise serializers.ValidationError('Closing date is prior to start date')
 
-class UpdateContratoSerializer(serializers.ModelSerializer):
+class UpdateContractSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contrato
+        model = Contract
         ##fields = ('id','type','companyName', 'initDate', 'endDate', 'fileName', 'isActive')
         fields = ('endDate')
     def validate(self, data):
@@ -27,5 +27,5 @@ class UpdateContratoSerializer(serializers.ModelSerializer):
             
             return data
         else:
-            raise serializers.ValidationError('Fecha Cierre es anterior a fecha inicio')
+            raise serializers.ValidationError('Close date is prior to start date')
 

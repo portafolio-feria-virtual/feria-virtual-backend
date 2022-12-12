@@ -1,18 +1,18 @@
 from django.db import models
-from Apps.cuentas.models import ComercianteExtranjero
+from Apps.cuentas.models import InternationalTrader
 from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 
 # Create your models here.
-class Licitacion(models.Model):
+class Bid(models.Model):
     class ProcessStatus(models.TextChoices):
-        publicar = "Publicada","Publicada"
-        cerrar = "Cerrada","Cerrada"
-        adjudicar = "Adjudicada","Adjudicada"
-        cancelar = "Cancelada","Cancelada"
-        rechazar = "Rechazada","Rechazada"
+        PUBLISHED = "PUBLISHED","Published"
+        CLOSED = "CLOSED","Closed"
+        ASSIGNED = "ASSIGNED","Assigned"
+        CANCELED = "CANCELED","Canceled"
+        REJECTED = "REJECTED","Rejected"
     
 
     name = models.CharField(max_length=255,blank=True)
@@ -24,18 +24,19 @@ class Licitacion(models.Model):
     postalCode = models.CharField(max_length=255,blank=True)
     productList = models.CharField(max_length=255,blank=True) 
     maxAmount = models.IntegerField()
-    processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.publicar)
+    processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.PUBLISHED)
     initDate = models.DateField(auto_now_add= True) 
     closeDate = models.DateField()
-    extranjero = models.ForeignKey(ComercianteExtranjero, on_delete=models.DO_NOTHING)
+    internationalTrader = models.ForeignKey(InternationalTrader, on_delete=models.DO_NOTHING)
 
-@receiver(post_save, sender= Licitacion)
+@receiver(post_save, sender= Bid)
 def afterCreateMail(instance=None, created= False, **kwargs):
     if created:
-            subject = f"Licitacion {instance.name} creada"
-            extranjero = ComercianteExtranjero.objects.get(id = instance.extranjero.id)
-            message = f"Estimado {extranjero.firstName} {extranjero.lastName}:\n\nSu licitacion de {instance.name} ha sido publicada satisfactoriamente.\n\nAtentamente. Feria Virtual Maipo Grande"
+            subject = f"Bid {instance.name} created"
+            international = InternationalTrader.objects.get(id = instance.international.id)
+            message = f"Dear Mr/Ms {international.firstName} {international.lastName}:\n\nYour Bid {instance.name} has been published successfully.\n\nSincerely. Feria Virtual Maipo Grande"
             lista = []
-            lista.append(extranjero.email)
+            lista.append(international.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
+            
 
