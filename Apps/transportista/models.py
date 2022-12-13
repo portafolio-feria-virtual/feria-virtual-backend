@@ -25,6 +25,7 @@ class TransportPostulation(models.Model):
     price = models.IntegerField(blank=True, null=True)
     assigned = models.BooleanField(default=False)
     accepted = models.CharField(max_length = 30 , choices = Status.choices , default = Status.STANDBY)
+    editable = models.BooleanField(default=True)
     closed = models.BooleanField(default=False)
     confirmed =  models.BooleanField(default=False)
 
@@ -38,6 +39,7 @@ class Shipping(models.Model):
 
     status = models.CharField(max_length = 30 , choices = Status.choices , default = Status.PREPARATION)
     bid = models.ForeignKey(Bid, on_delete=models.DO_NOTHING, blank= True, null=True)
+    editable = models.BooleanField(default=True)
     producer= models.ForeignKey(Producer, on_delete=models.DO_NOTHING, blank= True, null=True)
     carrier = models.ForeignKey(Carrier, on_delete=models.DO_NOTHING, blank= True, null=True)
 

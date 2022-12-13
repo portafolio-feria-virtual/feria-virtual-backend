@@ -35,7 +35,7 @@ class SearchContractView(APIView):
         serializer = ContractSerializer(Contracts)
         return Response(serializer.data)
 
-class EditContractView(APIView):
+class EditDateContractView(APIView):
     ##serializer_class = UpdateContractSerializer
     permission_classes = (permissions.AllowAny,)
 
@@ -47,6 +47,22 @@ class EditContractView(APIView):
         Contract = Contract.objects.get(id=id)
         Contract.endDate = data['endDate']
         serializer = ContractSerializer(Contract)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class EditPdfContractView(APIView):
+    serializer_class = UpdatePdfSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def patch(self, request):
+
+        data = self.request.data
+        ##print(data['id'])
+        id = data['id']
+        contract = Contract.objects.get(id=id)
+        contract.file = self.request.FILES["file"]
+        serializer = ContractSerializer(contract)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -78,4 +94,38 @@ class SeeAllLocalSalesView(APIView):
             return Response(serializer.data)
 
 
+class CloseContractView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def post(self, request):
+        data = self.request.data
+        user = self.request.user
+        try:
+            contract = Contract.objects.get(data["id"])
+            contract.isActive = False
+            contract.save()
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
+# class UpdateContract(UpdateAPIView):
+#     '''Modificar datos de una Bid segun id Bid'''
+#     permission_classes = (permissions.AllowAny, )
 
+
+#     queryset = Bid.objects.all()
+#     serializer_class = ListBidSerializer
+
+#     def get_object(self):
+#         data = self.request.data
+#         return Bid.objects.filter(id = data["id"]).first()
+
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({"message": "Bid modified"})
+
+#         else:
+#             return Response({"message": "failed", "details": serializer.errors})
+            

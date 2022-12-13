@@ -25,6 +25,7 @@ class Offer(models.Model):
     offerValue = models.IntegerField()
     offerFile = models.FileField(null=False, blank=False, default=None, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     assigned = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True)
     status = models.CharField(max_length = 30 , choices = Status.choices , default = Status.STANDBY)
     closed = models.BooleanField(default=False)
     confirmed =  models.BooleanField(default=False)
@@ -47,6 +48,7 @@ class LocalSale(models.Model):
     stock = models.IntegerField()
     location = models.CharField(max_length=255,blank=True)
     closed = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True)
     confirmed = models.BooleanField(default=False)
     
     def __str__(self):

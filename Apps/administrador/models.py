@@ -15,6 +15,7 @@ class Contract(models.Model):
         CARRIER = "CARRIER","carrier"
         PRODUCER = "PRODUCER", "producer"
     type = models.CharField(max_length = 30 , choices = Types.choices , default = Types.LOCAL_TRADER)
+    editable = models.BooleanField(default= True)
     companyName = models.CharField(max_length=255, blank=True)
     initDate = models.DateField(auto_now_add=True)
     modifyDate = models.DateField(auto_now=True)

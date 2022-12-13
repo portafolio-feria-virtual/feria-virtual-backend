@@ -60,7 +60,7 @@ class ListOffersProducerView(APIView):
     def get(self,request):
         data = self.request.data
         bid = data["bid"]   
-        offers = Offer.objects.filter(Bid=bid)
+        offers = Offer.objects.filter(bid=bid).exclude(closed=True)
         serializers = OfferSerializer(offers,many=True)
         return Response(serializers.data)
 
@@ -182,7 +182,19 @@ class SeeAllBidWithOfferView(APIView):
         return Response(serializer.data)
 
 
-
+class CloseBidView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    
+    def post(self, request):
+        data = self.request.data
+        user = self.request.user
+        try:
+            bid = Bid.objects.get(data["id"])
+            bid.editable = False
+            bid.processStatus = "CLOSED"   
+            bid.save()
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
     
 
 

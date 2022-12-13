@@ -319,15 +319,64 @@ class AcceptDeclineSaleOffer(APIView):
     try:
       data = self.request.data
       id = data["id"]
-      lSale = LocalSale.objects.get(id=id)
+      buyOffer = BuyingOffer.objects.get(id=id)
+      lSale = LocalSale.objects.get(id=buyOffer.localSale)
       option = data["option"]
       if option=="Accept":
-        offer.status = "ACCEPTED"
-        offer.confirmed= True
-        offer.save()
+        
+        buyOffer.editable = False
+        buyOffer.status = "FINISHED"
+        lSale.stock = lSale.stock - buyOffer.quantity
+        lSale.save()
+        buyOffer.save()
       if option == "Decline":  
-        offer.status = "REJECTED"
-        offer.closed = True
-        offer.save()
+        buyOffer.status = "FINISHED"
+        buyOffer.editable = False
+        buyOffer.save()
     except:
       return Response(status.HTTP_400_BAD_REQUEST)
+
+class UpdateOffer(generics.UpdateAPIView):
+    '''Modificar datos de una Bid segun id Bid'''
+    permission_classes = (permissions.AllowAny, )
+
+
+    queryset = Offer.objects.all()
+    serializer_class = OfferSerializer
+
+    def get_object(self):
+        data = self.request.data
+        return Offer.objects.filter(id = data["id"]).first()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Offer modified"}, status.HTTP_200_OK)
+
+        else:
+            return Response({"message": "failed", "details": serializer.errors},status.HTTP_400_BAD_REQUEST)
+class UpdateSale(generics.UpdateAPIView):
+    '''Modificar datos de una Bid segun id Bid'''
+    permission_classes = (permissions.AllowAny, )
+
+
+    queryset = LocalSale.objects.all()
+    serializer_class = LocalSaleSerializer
+
+    def get_object(self):
+        data = self.request.data
+        return LocalSale.objects.filter(id = data["id"]).first()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Offer modified"}, status.HTTP_200_OK)
+
+        else:
+            return Response({"message": "failed", "details": serializer.errors},status.HTTP_400_BAD_REQUEST)

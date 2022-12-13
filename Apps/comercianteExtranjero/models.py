@@ -27,6 +27,7 @@ class Bid(models.Model):
     processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.PUBLISHED)
     initDate = models.DateField(auto_now_add= True) 
     closeDate = models.DateField()
+    editable = models.BooleanField(default=True)
     internationalTrader = models.ForeignKey(InternationalTrader, on_delete=models.DO_NOTHING)
 
 @receiver(post_save, sender= Bid)
