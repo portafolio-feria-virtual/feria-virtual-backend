@@ -67,7 +67,7 @@ class SeeAllBidsView(APIView):
 
     def get(self, request):
       try:
-        bids = Bid.objects.all().exclude(status = "CLOSED",status ="CANCELED",status = "REJECTED")
+        bids = Bid.objects.all().exclude(status__in = ("CLOSED","CANCELED","REJECTED"))
         serializador = self.serializer_class(bids, many=True)
         return Response(serializador.data)
       except:
