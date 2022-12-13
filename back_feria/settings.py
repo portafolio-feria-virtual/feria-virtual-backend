@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #Aplicaciones creadas por equipo
 
+    #Aplicaciones creadas por equipo
     'Apps.cuentas',
     'Apps.administrador',
     'Apps.comercianteExtranjero',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'Apps.productor',
     'Apps.transportista',
     "Apps.serviciosInternos",
+    "Apps.reportes",
 
     # Aplicaciones utilitarias
     "corsheaders",

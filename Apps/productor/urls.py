@@ -24,6 +24,7 @@ urlpatterns = [
      path("salesWithBuyingOffers/", SeeAllSalesWithBuyingOfferView.as_view()),
      path("updateOffer/", UpdateOffer.as_view()),
      path("updateSale/", UpdateSale.as_view()),
+     path("seeAllBid/", SeeAllBidsView.as_view()),
 
    
 

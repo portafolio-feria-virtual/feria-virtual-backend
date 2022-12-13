@@ -21,6 +21,9 @@ from rest_framework import permissions, viewsets
 from .serializers import *
 from Apps.transportista.models import *
 from Apps.transportista.serializers import *
+from Apps.comercianteExtranjero.models import *
+from Apps.comercianteExtranjero.serializers import *
+
 import uuid
 
 
@@ -55,6 +58,17 @@ class SeeAllOfferView(APIView):
       try:
         offers = Offer.objects.all().filter(producer= self.request.user.id)
         serializador = self.serializer_class(offers, many=True)
+        return Response(serializador.data)
+      except:
+        return Response(status.HTTP_400_BAD_REQUEST)
+class SeeAllBidsView(APIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = BidSerializer
+
+    def get(self, request):
+      try:
+        bids = Bid.objects.all().exclude(status = "CLOSED",status ="CANCELED",status = "REJECTED")
+        serializador = self.serializer_class(bids, many=True)
         return Response(serializador.data)
       except:
         return Response(status.HTTP_400_BAD_REQUEST)
