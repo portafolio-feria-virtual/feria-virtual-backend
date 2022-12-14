@@ -47,6 +47,7 @@ class LocalSale(models.Model):
     price = models.IntegerField()
     stock = models.IntegerField()
     location = models.CharField(max_length=255,blank=True)
+    published = models.DateField(auto_now_add=True)
     closed = models.BooleanField(default=False)
     editable = models.BooleanField(default=True)
     confirmed = models.BooleanField(default=False)
