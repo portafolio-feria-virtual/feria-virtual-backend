@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+</style>
+<body>
+<img src="https://drive.google.com/uc?export=view&id=1ISaHAOkq-Nx9BUJyyGqxNe_ABDIv8_wx" class="img-invoice">
+<p class="head">
+    Feria Virtual Maipo Grande<br><br>
+    Local Sales Report
+</p>
+<p>
+    <b>Date range:</b>{{startDate}} - {{endDate}} <br>
+    <b>Report made by:</b> {{ user.name  }}<br>
+</p>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 15%;">ID</th>
+        <th style="width: 20%;">ID PRODUCER</th>
+        <th style="width: 15%;">NAME</th>
+        <th style="width: 15%;">STOCK</th>
+        <th style="width: 15%;">CLOSED</th>
+        <th style="width: 20%;">PUBLISHED ON</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for loc in lSales %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td class="text-center">{{ loc.id  }}</td>
+            <td class="text-center">{{ loc.producer }}</td>
+            <td>{{ loc.name }}</td>
+            <td style="text-align: center;">{{ loc.stock }}</td>
+            {% if loc.closed %}
+                <td style="text-align: center;"> CLOSED</td>
+            {% else %}
+                <td style="text-align: center;">NOT CLOSED</td>
+            {% endif %}
+            <td style="text-align: center;">{{ loc.published }}</td>
+        </tr>
+    {% endfor %}
+    <tr style="border-top: 1px solid black; padding-top: 4px;">
+
+        <td ><b>TOTAL SALES:</b></td>
+        <td >{{ total }}</td>
+        <td style=" color: blue;">ACTIVE SALES:</td>
+        <td style=" color: blue;">{{ actives }}</td>
+        <td style=" color: red;">CLOSED SALES:</td>
+        <td style=" color: red;">{{ notActives }}</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -2,7 +2,9 @@ from django.shortcuts import render
 from .models import *
 from .serializers import *
 from rest_framework.views import APIView
-from rest_framework import generics,permissions
+from rest_framework import generics,permissions, status
+from Apps.comercianteExtranjero.models import *
+from Apps.comercianteExtranjero.serializers import *
 
 # Create your views here.
 
@@ -53,4 +55,37 @@ class UpdateShippingStatusView(APIView):
     if shipping.status != "RECEPTIONED":
       index = self.stages.index(shipping.status)
       shipping.status = self.stages[index+1]
-    
+
+class ListAllBidsAvailablesView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            bids = Bid.objects.all().filter(closed= False)
+            return Bid(bids, many=True)
+
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+class UpdateTransportPostulation(generics.UpdateAPIView):
+    '''Modificar datos de una Bid segun id Bid'''
+    permission_classes = (permissions.AllowAny, )
+
+
+    queryset = TransportPostulation.objects.all()
+    serializer_class = addTransportPostulationSerializer
+
+    def get_object(self):
+        data = self.request.data
+        return TransportPostulation.objects.filter(id = data["id"]).first()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Offer modified"}, status.HTTP_200_OK)
+
+        else:
+            return Response({"message": "failed", "details": serializer.errors},status.HTTP_400_BAD_REQUEST)

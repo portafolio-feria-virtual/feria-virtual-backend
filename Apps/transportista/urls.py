@@ -8,4 +8,5 @@ urlpatterns = [
     path("acceptBid/",AcceptDeclineTransportPostulationView.as_view()),
     path("packageTracking/",ShippingStatusGeneralView.as_view()),
     path("changeTracking/",UpdateShippingStatusView.as_view()),
+    path("seeAllBidsAvailable/",ListAllBidsAvailablesView.as_view()),
 ]

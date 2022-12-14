@@ -4,6 +4,7 @@ from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save
 from django.core.mail import send_mail
+from django.core.validators import FileExtensionValidator
 from Apps.cuentas.models import *
 # Create your models here.
 
@@ -14,12 +15,13 @@ class Contract(models.Model):
         CARRIER = "CARRIER","carrier"
         PRODUCER = "PRODUCER", "producer"
     type = models.CharField(max_length = 30 , choices = Types.choices , default = Types.LOCAL_TRADER)
+    editable = models.BooleanField(default= True)
     companyName = models.CharField(max_length=255, blank=True)
     initDate = models.DateField(auto_now_add=True)
     modifyDate = models.DateField(auto_now=True)
     endDate = models.DateField(blank=True, null=True)
     isActive = models.BooleanField(default=True)
-    fileName = models.FileField(blank=True, null=True)
+    file = models.FileField(blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     
 
 @receiver(pre_save, sender=Contract)

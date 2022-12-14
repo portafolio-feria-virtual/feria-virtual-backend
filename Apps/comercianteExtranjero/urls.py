@@ -5,7 +5,7 @@ urlpatterns=[
     path('createBid/', AddBidView.as_view()),
     path('searchBid/', SearchBidView.as_view()),
     path('listBid/', ListBidView.as_view()),
-    path('listOffersProducer/', ListOffersProductorView.as_view()),
+    path('listOffersProducer/', ListOffersProducerView.as_view()),
     path('listCarriersPostulation/', ListCarriersPostulationView.as_view()),
     path('editBid/',UpdateBid.as_view()),
     path('extendCloseDateBid/',EditCloseDateView.as_view()),

@@ -193,14 +193,14 @@ class UpdateEmailView(generics.UpdateAPIView):
         user = self.request.user
         data = self.request.data
         if user.type == "PRODUCER":
-            productor = Producer.objects.get(id= user.id)
-            return productor
+            producer = Producer.objects.get(id= user.id)
+            return producer
         if user.type == "INTERNATIONAL TRADER":
-            extranjero = InternationalTrader.objects.get(id= user.id)
-            return extranjero
+            international = InternationalTrader.objects.get(id= user.id)
+            return international
         if user.type == "LOCAL TRADER":
-            cLocal = LocalTrader.objects.get(id= user.id)
-            return cLocal
+            lTrader = LocalTrader.objects.get(id= user.id)
+            return lTrader
         if user.type =="CARRIER":
             carrier = Carrier.objects.get(id= user.id)
             return carrier
