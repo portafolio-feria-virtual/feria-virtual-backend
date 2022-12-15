@@ -47,7 +47,7 @@ class SearchBidView(APIView):
 class ListBidView(APIView):
     '''Obtiene un lista Bides segun el id del extranjero tenga Bides '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request):
+    def post(self,request):
         data = self.request.data
         internationalTrader = data["internationalTrader"]   
         bids = Bid.objects.filter(internationalTrader= internationalTrader)
@@ -57,7 +57,7 @@ class ListBidView(APIView):
 class ListOffersProducerView(APIView):
     ''' Obtener lista ofertas segun id Bid en la oferta '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request):
+    def post(self,request):
         data = self.request.data
         bid = data["bid"]   
         offers = Offer.objects.filter(bid=bid).exclude(closed=True)
@@ -67,10 +67,10 @@ class ListOffersProducerView(APIView):
 class ListCarriersPostulationView(APIView):
     ''' Obtener lista ofertas segun id Bid en la postulacion transportista '''
     permission_classes = (permissions.AllowAny, )
-    def get(self,request):
+    def post(self,request):
         data = self.request.data
         bid = data["bid"]
-        postulations = TransportPostulation.objects.filter(Bid=bid)
+        postulations = TransportPostulation.objects.filter(bid=bid)
         serializers = addTransportPostulationSerializer(postulations,many=True)
         return Response(serializers.data)
 

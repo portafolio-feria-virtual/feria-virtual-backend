@@ -19,7 +19,8 @@ class ListAllSalesAvailablesView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             sales = LocalSale.objects.all().filter(sold = False)
-            return LocalSaleSerializer(sales, many=True)
+            serializer = LocalSaleSerializer(sales, many=True)
+            return Response(serializer.data, status.HTTP_200_OK)
 
         except:
             return Response(status.HTTP_400_BAD_REQUEST)
@@ -29,7 +30,8 @@ class ListAllBuyOffersView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             buyOffers = BuyingOffer.objects.all().filter(localTrader= self.request.user.id)
-            return BuyingOfferSerializer(buyOffers, many=True)
+            serializer = BuyingOfferSerializer(buyOffers, many=True)
+            return Response(serializer.data, status.HTTP_200_OK)
 
         except:
             return Response(status.HTTP_400_BAD_REQUEST)
@@ -82,14 +84,14 @@ class AcceptDeclineSaleAssignmentView(APIView):
     id = data["id"]
     try:
       buyOffer = BuyingOffer.objects.get(id=id)
-      option = data["option"]
-      if option=="Accept":
+      opt = data["opt"]
+      if opt=="Accept":
         buyOffer.status = "ACCEPTED"
         buyOffer.editable = False
         buyOffer.confirmed = True
 
         
-      if option == "Decline":  
+      if opt == "Decline":  
         buyOffer.status = "REJECTED"
         buyOffer.editable = False
         buyOffer.confirmed = False

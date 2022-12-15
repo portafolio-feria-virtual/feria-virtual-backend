@@ -66,8 +66,10 @@ class SeeAllBidsView(APIView):
     serializer_class = BidSerializer
 
     def get(self, request):
+
       try:
-        bids = Bid.objects.all().exclude(status__in = ("CLOSED","CANCELED","REJECTED"))
+        bids = Bid.objects.all().filter(processStatus="PUBLISHED")
+        
         serializador = self.serializer_class(bids, many=True)
         return Response(serializador.data)
       except:
@@ -241,11 +243,11 @@ class AcceptDeclineAssignmentView(APIView):
     id = data["id"]
     try:
       offer = Offer.objects.get(id=id)
-      option = data["option"]
-      if option=="Accept":
+      opt = data["opt"]
+      if opt=="Accept":
         offer.status = "ACCEPTED"
         offer.confirmed= True
-      if option == "Decline":  
+      if opt == "Decline":  
         offer.Status = "REJECTED"
         offer.closed = True
 
@@ -261,6 +263,7 @@ class ShippingStatusGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
   permission_classes = [permissions.AllowAny]
   def get(self, request):
+
     user = self.request.user
     shippings = Shipping.objects.all().filter(producer=user.id).exclude(status="PREPARATION")
     serializers = ShippingSerializer(shippings, many=True)
@@ -335,15 +338,15 @@ class AcceptDeclineSaleOffer(APIView):
       id = data["id"]
       buyOffer = BuyingOffer.objects.get(id=id)
       lSale = LocalSale.objects.get(id=buyOffer.localSale)
-      option = data["option"]
-      if option=="Accept":
+      opt = data["opt"]
+      if opt=="Accept":
         
         buyOffer.editable = False
         buyOffer.status = "FINISHED"
         lSale.stock = lSale.stock - buyOffer.quantity
         lSale.save()
         buyOffer.save()
-      if option == "Decline":  
+      if opt == "Decline":  
         buyOffer.status = "FINISHED"
         buyOffer.editable = False
         buyOffer.save()
@@ -378,7 +381,7 @@ class UpdateSale(generics.UpdateAPIView):
 
 
     queryset = LocalSale.objects.all()
-    serializer_class = LocalSaleSerializer
+    serializer_class = UpdateLocalSaleSerializer
 
     def get_object(self):
         data = self.request.data

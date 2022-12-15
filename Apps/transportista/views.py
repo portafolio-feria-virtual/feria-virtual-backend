@@ -27,13 +27,22 @@ class AcceptDeclineTransportPostulationView(APIView):
     data = self.request.data
     id = data["id"]
     postulation = TransportPostulation.objects.get(id=id)
-    option = data["option"]
-    if option=="Accept":
-      postulation.accepted = "ACCEPTED"
-      postulation.confirmed = True
-    if option == "Decline":  
-      postulation.accepted= "DECLINED"
-      postulation.closed = True
+    opt = data["opt"]
+    try:
+      if opt=="Accept":
+        postulation.accepted = "ACCEPTED"
+        postulation.confirmed = True
+        postulation.save()
+        serial = addTransportPostulationSerializer(postulation)
+        return Response(serial.data, status.HTTP_200_OK)
+      if opt == "Decline":  
+        postulation.accepted= "DECLINED"
+        postulation.closed = True
+        postulation.save()
+        serial = addTransportPostulationSerializer(postulation)
+        return Response(serial.data, status.HTTP_200_OK)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST)
 
 class ShippingStatusGeneralView(APIView):
   """ Metodo que retorna el estado del transporte/envio"""
@@ -51,18 +60,24 @@ class UpdateShippingStatusView(APIView):
     data = self.request.data
     user = self.request.user
 
-    shipping = Shipping.objects.get(id =data["id"])
-    if shipping.status != "RECEPTIONED":
-      index = self.stages.index(shipping.status)
-      shipping.status = self.stages[index+1]
-
+    try:
+      shipping = Shipping.objects.get(id =data["id"])
+      if shipping.status != "RECEPTIONED":
+          index = self.stages.index(shipping.status)
+          shipping.status = self.stages[index+1]
+          shipping.save()
+          serial = ShippingSerializer(shipping)
+          return Response(serial.data, status.HTTP_200_OK)
+    except:
+      return Response(status.HTTP_400_BAD_REQUEST, data)
 class ListAllBidsAvailablesView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
         try:
             bids = Bid.objects.all().filter(closed= False)
-            return Bid(bids, many=True)
+            serializador = BidSerializer(bids, many=True)
+            return Response(serializador.data, status.HTTP_200_OK)
 
         except:
             return Response(status.HTTP_400_BAD_REQUEST)

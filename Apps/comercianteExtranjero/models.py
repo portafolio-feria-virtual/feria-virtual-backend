@@ -27,6 +27,7 @@ class Bid(models.Model):
     processStatus = models.CharField(max_length=255, choices= ProcessStatus.choices, default=ProcessStatus.PUBLISHED)
     initDate = models.DateField(auto_now_add= True) 
     closeDate = models.DateField()
+    closed = models.BooleanField(default=False)
     editable = models.BooleanField(default=True)
     internationalTrader = models.ForeignKey(InternationalTrader, on_delete=models.DO_NOTHING)
 
@@ -34,7 +35,7 @@ class Bid(models.Model):
 def afterCreateMail(instance=None, created= False, **kwargs):
     if created:
             subject = f"Bid {instance.name} created"
-            international = InternationalTrader.objects.get(id = instance.international.id)
+            international = InternationalTrader.objects.get(id = instance.internationalTrader.id)
             message = f"Dear Mr/Ms {international.firstName} {international.lastName}:\n\nYour Bid {instance.name} has been published successfully.\n\nSincerely. Feria Virtual Maipo Grande"
             lista = []
             lista.append(international.email)

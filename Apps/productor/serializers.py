@@ -17,10 +17,18 @@ class OfferSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Unit price must be greater than 0')
 
 
+# class LocalSaleSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = LocalSale
+#         fields= ('__all__')
 class LocalSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale
-        fields= ('__all__')
+        fields= ("producer","name","price","stock","location")
+class UpdateLocalSaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocalSale
+        fields= ('id',"status","sold","producer","name","price","stock","location","published","closed","editable","confirmed")
 class AddLocalSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalSale

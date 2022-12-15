@@ -39,18 +39,19 @@ class EditDateContractView(APIView):
     ##serializer_class = UpdateContractSerializer
     permission_classes = (permissions.AllowAny,)
 
-    def patch(self, request):
+    def post(self, request):
+        try:
+            data = self.request.data
+            ##print(data['id'])
+            id = data['id']
+            contract = Contract.objects.get(id=id)
+            contract.endDate = data['endDate']
+            serializer = ContractSerializer(contract)
+        
+            return Response(serializer.data, status.HTTP_200_OK)
+        except:
+            return Response( status=status.HTTP_400_BAD_REQUEST)
 
-        data = self.request.data
-        ##print(data['id'])
-        id = data['id']
-        Contract = Contract.objects.get(id=id)
-        Contract.endDate = data['endDate']
-        serializer = ContractSerializer(Contract)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class EditPdfContractView(APIView):
     serializer_class = UpdatePdfSerializer
     permission_classes = (permissions.AllowAny,)
@@ -88,10 +89,9 @@ class SeeAllLocalSalesView(APIView):
     permission_classes = (permissions.AllowAny,)
     #serializer_class = VentaLocalSerializer
     def get(self, request):
-        def get(self, request):
-            localSale = LocalSale.objects.all()
-            serializer = LocalSaleSerializer(localSale, many=True)
-            return Response(serializer.data)
+        localSale = LocalSale.objects.all()
+        serializer = LocalSaleSerializer(localSale, many=True)
+        return Response(serializer.data)
 
 
 class CloseContractView(APIView):
