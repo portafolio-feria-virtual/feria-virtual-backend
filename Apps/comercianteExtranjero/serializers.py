@@ -12,7 +12,22 @@ from Apps.transportista.serializers import addTransportPostulationSerializer
 class BidSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Bid
-        fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','extranjero')
+        fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','internationalTrader')
+    
+    nowDate = datetime.now().date()
+    
+    def validate_closeDate(self,value):
+        if(self.nowDate > value):
+            raise serializers.ValidationError('Close Date is prior to current date')
+        return value
+    def validate_maxAmount(self, value):
+        if(value > 0):
+            return value
+        raise serializers.ValidationError('Max Amount must be greater than 0$')
+class UpdateBidSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Bid
+        fields = ('name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','internationalTrader')
     
     nowDate = datetime.now().date()
     
@@ -47,5 +62,5 @@ class BidWithOffersSerializer(serializers.ModelSerializer):
     postulations= addTransportPostulationSerializer(many=True,read_only=True)
     class Meta:
         model= Bid
-        fields= ("id",'name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','international',"offers","postulations")
+        fields= ("id",'name','description','country','region','city','street','postalCode','productList','maxAmount','processStatus','initDate','closeDate','internationalTrader',"offers","postulations")
 

@@ -77,8 +77,8 @@ def afterCreateMail(sender, instance=None, created= False, **kwargs):
 
     if sender.__name__ == "Offer":
         if created:
-            licitacion = Bid.objects.get(id=instance.licitacion.id)
-            subject = f"Offer {instance.name} published at biddin proccess {licitacion} "
+            bid= Bid.objects.get(id=instance.bid.id)
+            subject = f"Offer {instance.name} published at biddin proccess {bid.name} "
             producer = Producer.objects.get(id = instance.producer.id)
             message = f"Dear Mr/Ms {producer.firstName} {producer.lastName}:\n\nYour offer{instance.name} has been published successfully.\nYou will be notified of any change on it.\n\nSincerely. Feria Virtual Maipo Grande"
             lista = []

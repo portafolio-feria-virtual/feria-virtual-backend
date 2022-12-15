@@ -16,14 +16,14 @@ def testSignupExtranjero(client):
         country="Chile"
     )
 
-    response = client.post("/api/auth/signupExt/", payload)
+    response = client.post("/api/auth/signupInt/", payload)
 
     data = response.data
     #assert response.status_code == 201, response.message
     assert data["firstName"]== payload["firstName"]
 
 @pytest.mark.django_db
-def test_login_extranjero(client,user_extranjero):
+def test_login_extranjero(client,userExtranjero):
     
 
     response = client.post("/api/auth/login/",dict(email="wemake@bananas.com", password="toomuchbananas"))

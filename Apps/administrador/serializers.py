@@ -7,7 +7,7 @@ from .models import *
 class ContractSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contract
-        fields = ('type','companyName', 'initDate', 'endDate', 'fileName')
+        fields = ('type','companyName', 'initDate', 'endDate', 'file')
 
     nowDate = datetime.now().date()
     def validate(self, data):

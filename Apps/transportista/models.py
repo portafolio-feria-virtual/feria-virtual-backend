@@ -46,9 +46,9 @@ class Shipping(models.Model):
 @receiver(post_save, sender= TransportPostulation)
 def afterCreateMail(instance=None, created= False, **kwargs):
     if created:
-            subject = f"Postulation {instance.name} published"
+            subject = f"Postulation {instance.id} published"
             carrier = Carrier.objects.get(id = instance.carrier.id)
-            message = f"Dear Mr/Ms {carrier.firstName} {carrier.lastName}:\n\nYour postulation {instance.name} has been published successfuly.\nYou will be notified on any change.\n\nsincerely. Feria Virtual Maipo Grande"
+            message = f"Dear Mr/Ms {carrier.firstName} {carrier.lastName}:\n\nYour postulation {instance.id} has been published successfuly.\nYou will be notified on any change.\n\nsincerely. Feria Virtual Maipo Grande"
             lista = []
             lista.append(carrier.email)
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=lista)
